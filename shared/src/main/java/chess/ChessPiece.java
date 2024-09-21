@@ -93,9 +93,11 @@ public class ChessPiece {
         //make cycling for loops to check availability for all moves
         for (int newRow = row - 1; newRow <= row + 1; newRow++){
             for (int newCol = col - 1; newCol <= col + 1; newCol++){
-                ChessPiece otherPiece = board.getPiece(new ChessPosition(newRow, newCol));
-                if (otherPiece==null || otherPiece.getTeamColor() != this.getTeamColor()) {
-                    addPossibleMove(possibleMoves, row, col, newRow, newCol);
+                if (newRow >= 1 && newRow <= 8 && newCol >= 1 && newCol <= 8) {
+                    ChessPiece otherPiece = board.getPiece(new ChessPosition(newRow, newCol));
+                    if (otherPiece==null || otherPiece.getTeamColor() != this.getTeamColor()) {
+                        addPossibleMove(possibleMoves, row, col, newRow, newCol);
+                    }
                 }
             }
         }
@@ -110,27 +112,44 @@ public class ChessPiece {
         int newRow;
         int newCol;
 
-        //pawn can move one forward if no one is there
-        otherPiece = board.getPiece(new ChessPosition(row + 1, col));
-        if (otherPiece==null){
-            addPossibleMove(possibleMoves, row, col, row+1, col);
+        if (row+1 > 8){
+            return possibleMoves;
         }
-
         //can move two forward if still in original place
-        otherPiece = board.getPiece(new ChessPosition(row + 2, col));
-        if (otherPiece==null){
-            addPossibleMove(possibleMoves, row, col, row+2, col);
+        if (row == 2){
+            otherPiece = board.getPiece(new ChessPosition(row + 2, col));
+            if (otherPiece==null){
+                addPossibleMove(possibleMoves, row, col, row+2, col);
+            }
         }
+        else {
+            otherPiece = board.getPiece(new ChessPosition(row + 1, col));
+            if (otherPiece==null){
+                addPossibleMove(possibleMoves, row, col, row+1, col);
+            }
+        }
+        //pawn can move one forward if no one is there
+
 
         //can move diagonally forward if taking the place of an enemy
-        otherPiece = board.getPiece(new ChessPosition(row + 1, col + 1));
-        if (otherPiece.getTeamColor() != this.getTeamColor()){
-            addPossibleMove(possibleMoves, row, col, row+1, col+1);
+        if (col+1 < 8){
+            otherPiece = board.getPiece(new ChessPosition(row + 1, col + 1));
+            if (otherPiece!=null){
+                if (otherPiece.getTeamColor() != this.getTeamColor()){
+                    addPossibleMove(possibleMoves, row, col, row+1, col+1);
+                }
+            }
         }
-        otherPiece = board.getPiece(new ChessPosition(row + 1, col-1));
-        if (otherPiece.getTeamColor() != this.getTeamColor()){
-            addPossibleMove(possibleMoves, row, col, row+1, col-1);
+
+        if (col-1 > 1){
+            otherPiece = board.getPiece(new ChessPosition(row + 1, col-1));
+            if (otherPiece!=null){
+                if (otherPiece.getTeamColor() != this.getTeamColor()){
+                    addPossibleMove(possibleMoves, row, col, row+1, col-1);
+                }
+            }
         }
+
         return possibleMoves;
     }
 
@@ -203,8 +222,8 @@ public class ChessPiece {
     public void checkExtended(ChessBoard board, int row, int col, int rowAdd, int colAdd,
                               Collection<ChessMove> possibleMoves){
 
-        for (int newRow = row+rowAdd; newRow <= 8 && newRow >= 1; row+=rowAdd){
-            for (int newCol = col+colAdd; newCol <= 8 && newCol >= 1; col+=colAdd){
+        for (int newRow = row+rowAdd; newRow <= 8 && newRow >= 1; newRow+=rowAdd){
+            for (int newCol = col+colAdd; newCol <= 8 && newCol >= 1; newCol+=colAdd){
                 ChessPiece otherPiece = board.getPiece(new ChessPosition(newRow, newCol));
                 if (otherPiece==null){
                     addPossibleMove(possibleMoves, row, col, newRow, newCol);
@@ -217,6 +236,9 @@ public class ChessPiece {
                     return;
                 }
             }
+            if (col+colAdd < 1 || col+colAdd > 8) {
+                return;
+            }
         }
     }
 
@@ -226,12 +248,14 @@ public class ChessPiece {
         int newRow = row+rowAdd;
         int newCol = col+colAdd;
 
-        ChessPiece otherPiece = board.getPiece(new ChessPosition(newRow, newCol));
-        if (otherPiece==null){
-            addPossibleMove(possibleMoves, row, col, newRow, newCol);
-        }
-        else if (otherPiece.getTeamColor() != this.getTeamColor()) {
-            addPossibleMove(possibleMoves, row, col, newRow, newCol);
+        if (newRow >= 1 && newRow <= 8 && newCol >= 1 && newCol <= 8){
+            ChessPiece otherPiece = board.getPiece(new ChessPosition(newRow, newCol));
+            if (otherPiece==null){
+                addPossibleMove(possibleMoves, row, col, newRow, newCol);
+            }
+            else if (otherPiece.getTeamColor() != this.getTeamColor()) {
+                addPossibleMove(possibleMoves, row, col, newRow, newCol);
+            }
         }
     }
 
