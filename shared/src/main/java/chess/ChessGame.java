@@ -217,6 +217,7 @@ public class ChessGame {
         if (isInCheckmate(teamColor)){
             return false;
         }
+        //this one was tricky
         for (int i = 1; i < 9; i++){
             for (int j = 1; j < 9; j++){
                 if (chessBoard.getPiece(new ChessPosition(i,j)) != null){
