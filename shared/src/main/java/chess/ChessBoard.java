@@ -43,6 +43,20 @@ public class ChessBoard {
         return chessBoardPieces[position.getRow()-1][position.getColumn()-1];
     }
 
+    public ChessPosition findKing(ChessGame.TeamColor color){
+        for (int i = 0; i < 8; i++){
+            for (int j = 0; j < 8; j++){
+                if (chessBoardPieces[i][j]!= null){
+                    if (chessBoardPieces[i][j].getPieceType() == ChessPiece.PieceType.KING
+                            && chessBoardPieces[i][j].getTeamColor() == color){
+                        return new ChessPosition(i + 1, j + 1);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
