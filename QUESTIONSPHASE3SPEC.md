@@ -204,3 +204,90 @@ A.
 U. Not Yet
 
 N: place your data access classes in a folder named server/src/main/java/dataaccess
+
+"Service Classes"
+
+T. "Service classes implement the actual functionality of the server... logics associated with 
+the web endpoints"
+
+T. "Have a separate service class for each group of related endpoints"
+
+T. "Each service method receives a Request object containing all the information it needs to do its
+work"
+
+T. "Returns corresponding result object containign the output of the method"
+Q. Is the output either the success or failure response?
+A.
+U. Not Yet
+
+T. "To do their work, service classes need to make heavy use of the Model classes and Data Access
+classes described above.
+
+N. service classes in folder named server/src/main/java/service
+
+"Request and Result Classes"
+
+N. Service class methods receive request objects as input and return result objects as output
+
+T. "The contents of these classes can be derived from the JSON inputs and outputs of the web 
+endpoints documented above.
+Q. How do they receive the JSON object?
+A.
+U. Not Yet
+
+T. "you could use the model UserData object that you will also use when you call your data access
+layer"
+Q. What do they mean by "Data Access layer"?
+A.
+U. Not Yet
+
+N. Looks like I should use the same model objects for dataAccess as for requests and results
+
+N. Looks based on the JSON input or output, I need to derive which model or output that relates to
+
+N. Looks like I even need record classes for things like LoginResult
+Q. Do I need to have a separate file for each record?
+A.
+U. Not Yet
+
+Q. How do I know when to make a record or how many?
+A.
+U. Not Yet
+
+"Serialization"
+
+N. Field names in Request and Result classes must match exactly the property names in the JSON strings,
+including capitalization
+Q. How do I make a Request and Result class?
+A.
+U.
+
+
+N. Serialize like this:
+var serializer = new Gson();
+var game = new ChessGame();
+//serialize to JSON
+var json = serializer.toJson(game);
+//deserialize back to ChessGame
+game = serializer.fromJson(json, ChessGame.class);
+
+Q. In the code above, what is the datatype "var"?
+A.
+U. Not Yet
+
+"Server Handler Classes"
+
+T. "Server Handler classes serve as a translator between HTTP and Java"
+
+T. "will convert an HTTP request into Java usable objects & data"
+N. So I guess the client communicates to me through HTTP and I do everything in Java
+
+T. "When the service responds, the handler converts the response object back to JSON and sends the
+HTTP response"
+
+N. Create as many handler classes as are necessary
+Q. How do I know which handler classes to implement and how many?
+A.
+U. Not Yet
+
+
