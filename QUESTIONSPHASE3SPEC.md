@@ -291,3 +291,67 @@ A.
 U. Not Yet
 
 
+"Server Class"
+
+T. "Server receives netweork HTTP requests and send them to the correct handler for processing"
+
+N. Name server class "Server" and provide "run" method that has desired port parameter and a "stop" 
+method that shuts your HTTP server down
+Q. How do I decide which port to pass as a parameter?
+A. 
+U. Not Yet
+
+Q. How do I shut down HTTP server?
+A.
+U. Not Yet
+
+N. Keep Server class in server/src/main/java/server
+
+"Web Browser Interface"
+
+T. "you need to determine the path where the web directory is located and then tell spark to 
+load static web files from that directory. Spark.staticFiles.location("web") You will want to 
+put the web directory in a src/main/resources directory and make the folder as Resources Root 
+in IntelliJ."
+Q. What?
+A.
+U. Not Yet
+
+"Service Unit Tests"
+
+T. "Write a positive and a negative JUNIT test case for each public method on your Service classes,
+except for Clear which only needs a positive test case."
+Q. How do I do this?
+A.
+U. Not yet
+
+N. Put server test cases folder in server/src/test/java/service
+
+"Suggested Implementation Order"
+
+N. Build service classes for each, and a test for each method
+
+T. "Make sure you can hit your endpoint from a browser or Curl"
+Q. What does that mean? What is a Curl?
+A.
+U. Not Yet
+
+"Web API"
+
+"Web Server"
+
+T. "When you define an endpoint method with JavaSpark, you supply the HTTP method, path, and a 
+Functional Interface method implementation called when the matching HTTP request is made."
+
+
+T. "an anonymous class implementation of the functional interface spark.Route"
+Q. What is that and why do we need it?
+A.
+U. Not Yet
+
+T. "Lamda function... Java method reference syntax" 
+Q. What are those things? Will I need them?
+A.
+U. Not Yet
+
+
