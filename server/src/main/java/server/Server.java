@@ -11,6 +11,8 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
 
+        ClearHandler clearhandler = new ClearHandler();
+        Spark.delete("/db", clearhandler::clear);
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
