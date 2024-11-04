@@ -21,15 +21,15 @@ public class ChessService {
     }
 
     public UserData getUser(String username){
-
+        return null;
     }
 
     public int createGame(GameData gameData){
-
+        return 0;
     }
 
     public GameData getGame(int gameID){
-
+        return null;
     }
 
     public void updateGame(int gameID){
@@ -37,19 +37,19 @@ public class ChessService {
     }
 
     public Collection<GameData> listGames(){
-
+        return null;
     }
 
     public AuthData createAuth(){
-
+        return null;
     }
 
     public AuthData getAuth(String authToken){
-
+        return null;
     }
 
     public void deleteAuth(AuthData authData){
-        
+
     }
 
 }
