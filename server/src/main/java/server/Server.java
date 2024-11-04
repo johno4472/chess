@@ -23,7 +23,7 @@ public class Server {
         LogoutHandler logoutHandler = new LogoutHandler();
         Spark.delete("/session", logoutHandler::logout);
 
-        ListGamesHandler listGamesHandler = new listGamesHandler();
+        ListGamesHandler listGamesHandler = new ListGamesHandler();
         Spark.get("/game", listGamesHandler::listGames);
 
         CreateGameHandler createGameHandler = new CreateGameHandler();
