@@ -36,7 +36,7 @@ public class ChessService {
         return userDAO.getUser(username);
     }
 
-    public int createGame(GameData gameData){
+    public int createGame(int gameID){
         gameDAO.createGame(gameData);
         return gameData.gameID();
     }

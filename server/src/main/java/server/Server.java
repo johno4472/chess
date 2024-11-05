@@ -1,5 +1,6 @@
 package server;
 
+import service.ChessService;
 import spark.*;
 
 public class Server {
