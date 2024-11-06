@@ -8,6 +8,11 @@ public class Server {
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
+
+        ChessService service;
+        service = new ChessService()
+        //a. need to initialize user, game, and auth DAO to pass in here
+
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
@@ -19,6 +24,7 @@ public class Server {
         Spark.post("/user", registerHandler::register);
 
         LoginHandler loginHandler = new LoginHandler();
+        //b. so I can pass in the service object here ^^
         Spark.post("/session", loginHandler::login);
 
         LogoutHandler logoutHandler = new LogoutHandler();
