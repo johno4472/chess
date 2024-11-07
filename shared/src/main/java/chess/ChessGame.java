@@ -165,11 +165,9 @@ public class ChessGame {
         for (int i = 1; i < 9; i++){
             for (int j = 1; j < 9; j++){
                 ChessPiece piece = chessBoard.getPiece(new ChessPosition(i, j));
-                if (piece != null){
-                    if (piece.getTeamColor() != teamColor){
-                        if (kingInDanger(kingPosition, piece.pieceMoves(chessBoard, new ChessPosition(i, j)))){
-                            return true;
-                        }
+                if (piece != null && piece.getTeamColor() != teamColor){
+                    if (kingInDanger(kingPosition, piece.pieceMoves(chessBoard, new ChessPosition(i, j)))){
+                        return true;
                     }
                 }
             }
@@ -191,12 +189,9 @@ public class ChessGame {
             for (int i = 1; i < 9; i++){
                 for (int j = 1; j < 9; j++){
                     ChessPiece piece = chessBoard.getPiece(new ChessPosition(i, j));
-                    if (piece != null){
-                        if (piece.getTeamColor() == teamColor){
-                            if (!validMoves(new ChessPosition(i, j)).isEmpty()){
-                                return false;
-                            }
-                        }
+                    if (piece != null && piece.getTeamColor() == teamColor &&
+                            !validMoves(new ChessPosition(i, j)).isEmpty()){
+                        return false;
                     }
                 }
             }
@@ -220,15 +215,10 @@ public class ChessGame {
         //this one was tricky
         for (int i = 1; i < 9; i++){
             for (int j = 1; j < 9; j++){
-                if (chessBoard.getPiece(new ChessPosition(i,j)) != null){
-                    if (chessBoard.getPiece(new ChessPosition(i, j)).getTeamColor() == teamColor){
-                        if (i == 4 && j == 7){
-                            int fun = 1;
-                        }
-                        if (!validMoves(new ChessPosition(i, j)).isEmpty()){
-                            Collection<ChessMove> movies = validMoves(new ChessPosition(i, j));
-                            return false;
-                        }
+                if (chessBoard.getPiece(new ChessPosition(i,j)) != null
+                        && chessBoard.getPiece(new ChessPosition(i, j)).getTeamColor() == teamColor){
+                    if (!validMoves(new ChessPosition(i, j)).isEmpty()){
+                        return false;
                     }
                 }
             }
