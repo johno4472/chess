@@ -2,6 +2,7 @@ package dataaccess;
 
 import model.AuthData;
 import model.GameData;
+import java.util.UUID;
 
 import java.util.HashMap;
 
@@ -11,12 +12,13 @@ public class MemoryAuthDAO implements AuthDAO {
 
     @Override
     public void clear() {
-
+        authList.clear();
     }
 
     @Override
-    public AuthData createAuth() {
-        return null;
+    public String createAuth(String authToken, AuthData authData) {
+        authList.put(authToken, authData);
+        return authToken;
     }
 
     @Override
@@ -25,7 +27,7 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void deleteAuth(AuthData authData) {
-        authList.remove(authData.authToken());
+    public void deleteAuth(String authToken) {
+        authList.remove(authToken);
     }
 }

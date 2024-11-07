@@ -22,10 +22,17 @@ public class LoginHandler {
         //d. Service will call a dataaccess method to create an Authtoken
         //e. Dataaccess returns authtoken to service, which returns to handler, which creates
         // a loginresponse object with the username and authtoken and message
+        LoginResult loginResult;
+        loginResult = service.login(loginRequest);
         // that gets sent to my server
-        res.status(); // <- this is the status
+        if (loginResult.username() != null){
+            res.status(200);
+        }
+        else {
+            res.status(401);
+        }
+        //res.status(); // <- this is the status
         //make login result in service and send to handler
-        String response = new Gson().toJson(LoginResult);
-        return response;
+        return new Gson().toJson(loginResult);
     }
 }

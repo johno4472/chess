@@ -26,8 +26,10 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(int gameID) {
+    public void updateGame(int gameID, GameData gameData) {
         //update string gameName anytime the game players or moves are changed
+        games.remove(gameID);
+        games.put(gameID, gameData);
     }
 
     @Override

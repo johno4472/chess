@@ -11,7 +11,7 @@ public interface GameDAO {
 
     public GameData getGame(int gameID);
 
-    public void updateGame(int gameID);
+    public void updateGame(int gameID, GameData gameData);
 
     public Collection<GameData> listGames();
 }

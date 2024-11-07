@@ -3,10 +3,9 @@ package server;
 import com.google.gson.Gson;
 import model.UserData;
 import service.ChessService;
+import service.requestresult.RegisterResult;
 import spark.Request;
 import spark.Response;
-
-import java.util.ArrayList;
 
 public class RegisterHandler {
 
@@ -18,7 +17,18 @@ public class RegisterHandler {
 
     public Object register (Request req, Response res) {
         UserData userData = new Gson().fromJson(req.body(), UserData.class);
-        service.addUser(userData);
-        return res;
+        if (userData.username() == null || userData.password() == null || userData.email() == null){
+            res.status(400);
+            return new Gson().toJson(new RegisterResult(null, null, "Error: bad request"));
+        }
+        RegisterResult registerResult;
+        registerResult = service.addUser(userData);
+        if (registerResult.username() != null){
+            res.status(200);
+        }
+        else{
+            res.status(403);
+        }
+        return new Gson().toJson(registerResult);
     }
 }

@@ -5,10 +5,10 @@ public interface AuthDAO {
 
     public void clear();
 
-    public AuthData createAuth();
+    public String createAuth(String authToken, AuthData authData);
 
     public AuthData getAuth(String authToken);
 
-    public void deleteAuth(AuthData authData);
+    public void deleteAuth(String authToken);
 
 }

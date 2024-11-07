@@ -1,5 +1,7 @@
 package server;
 
+import com.google.gson.Gson;
+import service.requestresult.ClearResult;
 import spark.Request;
 import spark.Response;
 import service.ChessService;
@@ -18,7 +20,9 @@ public class ClearHandler {
         //which can call the "clear all" method in my DataAccess Class, which clears everything
         //better to have 3 different interfaces like in Spec
         service.clear();
+        res.status(200);
         //all three interfaces have clear function in them
-        return null;
+        ClearResult clearResult = new ClearResult(null);
+        return new Gson().toJson(clearResult);
     }
 }

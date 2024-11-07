@@ -1,6 +1,8 @@
 package server;
 
+import com.google.gson.Gson;
 import service.ChessService;
+import service.requestresult.ListGamesResult;
 import spark.Request;
 import spark.Response;
 
@@ -13,7 +15,16 @@ public class ListGamesHandler {
     }
 
     public Object listGames (Request req, Response res) {
-        service.listGames();
-        return res;
+        String authToken = req.headers("authorization");
+        ListGamesResult listGamesResult;
+        listGamesResult = service.listGames(authToken);
+
+        if (listGamesResult.games() != null){
+            res.status(200);
+        }
+        else{
+            res.status(401);
+        }
+        return new Gson().toJson(listGamesResult);
     }
 }
