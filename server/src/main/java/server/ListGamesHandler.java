@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import service.ChessService;
 import service.requestresult.ListGamesResult;
 import spark.Request;
@@ -14,7 +15,7 @@ public class ListGamesHandler {
         this.service = service;
     }
 
-    public Object listGames (Request req, Response res) {
+    public Object listGames (Request req, Response res) throws DataAccessException {
         String authToken = req.headers("authorization");
         ListGamesResult listGamesResult;
         listGamesResult = service.listGames(authToken);

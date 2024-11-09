@@ -93,7 +93,7 @@ public class ChessService {
         }
     }
 
-    public ListGamesResult listGames(String authToken){
+    public ListGamesResult listGames(String authToken) throws DataAccessException {
         AuthData authData = authDAO.getAuth(authToken);
         if (authData != null){
             Collection<GameData> gamesList;
@@ -114,7 +114,7 @@ public class ChessService {
         }
     }
 
-    public JoinGameResult joinGame(JoinGameRequest joinGameRequest) {
+    public JoinGameResult joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
         AuthData authData = authDAO.getAuth(joinGameRequest.authToken());
         int gameID = joinGameRequest.gameID();
         if (authData != null) {

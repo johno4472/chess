@@ -19,7 +19,6 @@ public class Server {
         userDAO = new MemoryUserDAO();
         ChessService service;
         service = new ChessService(gameDAO, authDAO, userDAO);
-        DatabaseManager.createDatabase();
         //a. need to initialize user, game, and auth DAO to pass in here
 
         Spark.staticFiles.location("web");

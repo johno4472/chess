@@ -2,6 +2,7 @@ package server;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import model.GameData;
 import model.JoinGameOptions;
 import service.ChessService;
@@ -18,7 +19,7 @@ public class JoinGameHandler {
         this.service = service;
     }
 
-    public Object joinGame (Request req, Response res) {
+    public Object joinGame (Request req, Response res) throws DataAccessException {
         String authToken = req.headers("authorization");
         JoinGameOptions options = new Gson().fromJson(req.body(), JoinGameOptions.class);
 
