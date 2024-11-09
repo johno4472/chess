@@ -1,41 +1,55 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.GameData;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import com.google.gson.Gson;
 
 public class MySQLGameDAO implements GameDAO {
     @Override
     public void clear() {
         var statement = "TRUNCATE pet";
-        executeUpdate(statement);
+        ExecuteUpdate.executeUpdate(statement);
     }
 
     @Override
     public int createGame(GameData gameData) {
         var statement = "INSERT INTO games (gameID, game, json) VALUES (?, ?, ?)";
-        var json = new Gson().toJson(gameData);
-        var id = executeUpdate(statement, gameData.gameID(), gameData, json);
+        ExecuteUpdate.executeUpdate(statement, gameData.gameID(), gameData);
         return gameData.gameID();
     }
 
     @Override
-    public GameData getGame(int gameID) {
+    public GameData getGame(int gameID) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT gameId, json FROM games WHERE id=?";
             try (var ps = conn.prepareStatement(statement)) {
-                ps.setInt(1, id);
+                ps.setInt(1, gameID);
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        return readPet(rs);
+                        return readGame(rs);
                     }
                 }
             }
-        } catch (Exception e) {
-            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         return null;
+    }
+
+    public GameData readGame(ResultSet rs) throws SQLException {
+        int gameID = rs.getInt("gameID");
+        String whiteUsername = rs.getString("whiteUsername");
+        String blackUsername = rs.getString("blackUsername");
+        String gameName = rs.getString("gameName");
+        var jsonGame = rs.getString("game");
+        ChessGame game = new Gson().fromJson(jsonGame, ChessGame.class);
+        return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
     }
 
     @Override
@@ -44,21 +58,21 @@ public class MySQLGameDAO implements GameDAO {
     }
 
     @Override
-    public Collection<GameData> listGames() {
-        var result = new Collection<GameData>() {
-        };
+    public Collection<GameData> listGames() throws DataAccessException {
+        Collection<GameData> games;
+        games = new ArrayList<>();
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT gameID, json FROM games";
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        result.add(readPet(rs));
+                        games.add(readGame(rs));
                     }
                 }
             }
-        } catch (Exception e) {
-            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return result;
+        return games;
     }
 }

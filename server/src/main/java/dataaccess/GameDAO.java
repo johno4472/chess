@@ -9,9 +9,9 @@ public interface GameDAO {
 
     public int createGame(GameData gameData);
 
-    public GameData getGame(int gameID);
+    public GameData getGame(int gameID) throws DataAccessException;
 
     public void updateGame(int gameID, GameData gameData);
 
-    public Collection<GameData> listGames();
+    public Collection<GameData> listGames() throws DataAccessException;
 }

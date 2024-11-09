@@ -2,18 +2,20 @@ package dataaccess;
 
 import model.AuthData;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class MySQLAuthDAO implements AuthDAO {
     @Override
     public void clear() {
         var statement = "TRUNCATE auth";
-        executeUpdate(statement);
+        ExecuteUpdate.executeUpdate(statement);
     }
 
     @Override
     public String createAuth(String authToken, AuthData authData) {
         var statement = "INSERT INTO auth (name, type, json) VALUES (?, ?, ?)";
-        var json = new Gson().toJson(authData);
-        var id = executeUpdate(statement, authToken, authData.username(), json);
+        var id = ExecuteUpdate.executeUpdate(statement, authToken, authData.username());
         return authToken;
     }
 
@@ -22,22 +24,28 @@ public class MySQLAuthDAO implements AuthDAO {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT id, json FROM auth WHERE authToken=?";
             try (var ps = conn.prepareStatement(statement)) {
-                ps.setInt(1, id);
+                ps.setString(1, authToken);
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        return readPet(rs);
+                        return readAuthData(rs);
                     }
                 }
             }
-        } catch (Exception e) {
-            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
         }
         return null;
+    }
+
+    public AuthData readAuthData(ResultSet rs) throws SQLException {
+        String username = rs.getString("username");
+        String authToken = rs.getString("authToken");
+        return new AuthData(authToken, username);
     }
 
     @Override
     public void deleteAuth(String authToken) {
         var statement = "DELETE FROM auth WHERE authToken=?";
-        executeUpdate(statement, authToken);
+        ExecuteUpdate.executeUpdate(statement, authToken);
     }
 }
