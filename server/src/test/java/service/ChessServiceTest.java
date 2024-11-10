@@ -78,7 +78,7 @@ class ChessServiceTest {
     }
 
     @Test
-    void createGamePositive() {
+    void createGamePositive() throws DataAccessException {
         authDAO.createAuth("authToken", new AuthData("authToken", "user"));
         service.createGame(new CreateGameRequest("gameName", "authToken"));
         assertEquals(gameDAO.listGames().size(), 1);
@@ -93,7 +93,7 @@ class ChessServiceTest {
     }
 
     @Test
-    void listGamesPositive() {
+    void listGamesPositive() throws DataAccessException {
         authDAO.createAuth("authToken", new AuthData("authToken", "user"));
         service.createGame(new CreateGameRequest("gameName", "authToken"));
         service.createGame(new CreateGameRequest("gameName", "authToken"));
@@ -102,7 +102,7 @@ class ChessServiceTest {
     }
 
     @Test
-    void listGamesNegative() {
+    void listGamesNegative() throws DataAccessException {
         authDAO.createAuth("authToken", new AuthData("authToken", "user"));
         service.createGame(new CreateGameRequest("gameName", "authToken"));
         service.createGame(new CreateGameRequest("gameName", "authToken"));
@@ -111,7 +111,7 @@ class ChessServiceTest {
     }
 
     @Test
-    void joinGamePositive() {
+    void joinGamePositive() throws DataAccessException {
         authDAO.createAuth("authToken1", new AuthData("authToken1", "user1"));
         CreateGameResult result = service.createGame(new CreateGameRequest("gameName",
                 "authToken1"));
@@ -124,7 +124,7 @@ class ChessServiceTest {
     }
 
     @Test
-    void joinGameNegative() {
+    void joinGameNegative() throws DataAccessException {
         authDAO.createAuth("authToken1", new AuthData("authToken1", "user1"));
         CreateGameResult createResult = service.createGame(new CreateGameRequest("gameName",
                 "authToken1"));

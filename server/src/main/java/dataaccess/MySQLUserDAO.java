@@ -8,11 +8,11 @@ import java.sql.SQLException;
 
 public class MySQLUserDAO implements UserDAO {
 
-   
+
 
     @Override
     public void clear() {
-        var userStatement = "TRUNCATE userData";
+        var userStatement = "TRUNCATE users";
         ExecuteUpdate.executeUpdate(userStatement);
     }
 

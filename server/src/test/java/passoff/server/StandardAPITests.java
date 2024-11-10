@@ -7,6 +7,7 @@ import passoff.model.*;
 import server.Server;
 
 import java.net.HttpURLConnection;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -32,7 +33,7 @@ public class StandardAPITests {
     }
 
     @BeforeAll
-    public static void init() throws DataAccessException {
+    public static void init() throws DataAccessException, SQLException {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);

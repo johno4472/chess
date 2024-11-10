@@ -48,6 +48,54 @@ public class DatabaseManager {
         }
     }
 
+    public static void configureDatabase() throws DataAccessException, SQLException {
+        DatabaseManager.createDatabase();
+        try (var connection = getConnection()){
+            for (var statement : BUILDSTATEMENTS) {
+                try (var preparedStatement = connection.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        }
+    }
+
+    private static final String[] BUILDSTATEMENTS = {
+            """
+            CREATE TABLE IF NOT EXISTS users (
+                `username` varchar(256),
+                `password` varchar(256),
+                `email` varchar(256),
+                PRIMARY KEY (`username`),
+                INDEX(`password`),
+                INDEX(`email`)
+            )
+            """
+            ,
+            """
+            CREATE TABLE IF NOT EXISTS games (
+                `id` INT AUTO_INCREMENT,
+                `whiteUsername` varchar(256),
+                `blackUsername` varchar(256),
+                `gameName` varchar(256),
+                `game` varchar(256),
+                PRIMARY KEY (`id`),
+                INDEX(`whiteUsername`),
+                INDEX(`blackUsername`),
+                INDEX(`gameName`),
+                INDEX(`game`)
+            )
+            """
+            ,
+            """
+            CREATE TABLE IF NOT EXISTS auth (
+                `authToken` varchar(256),
+                `username` varchar(256),
+                PRIMARY KEY (`authToken`),
+                INDEX(`username`)
+            )
+            """
+    };
+
     /**
      * Create a connection to the database and sets the catalog based upon the
      * properties specified in db.properties. Connections to the database should

@@ -16,7 +16,7 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public void clear() {
-        var statement = "TRUNCATE pet";
+        var statement = "TRUNCATE games";
         ExecuteUpdate.executeUpdate(statement);
     }
 
