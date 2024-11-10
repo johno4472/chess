@@ -8,17 +8,7 @@ import java.sql.SQLException;
 
 public class MySQLUserDAO implements UserDAO {
 
-    public MySQLUserDAO () throws DataAccessException {
-        try {
-            configureDatabase();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-    }
+   
 
     @Override
     public void clear() {

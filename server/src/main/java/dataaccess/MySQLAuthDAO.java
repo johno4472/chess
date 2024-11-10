@@ -8,6 +8,7 @@ import java.sql.SQLException;
 public class MySQLAuthDAO implements AuthDAO {
 
 
+
     @Override
     public void clear() {
         var statement = "TRUNCATE auth";

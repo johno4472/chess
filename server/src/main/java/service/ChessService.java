@@ -33,9 +33,9 @@ public class ChessService {
     }
 
     public void clear() {
-        gameDAO.clear();
+        //gameDAO.clear();
         authDAO.clear();
-        userDAO.clear();
+        //userDAO.clear();
     }
 
     public LoginResult login(LoginRequest loginRequest) {

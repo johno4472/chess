@@ -14,9 +14,13 @@ public class Server {
         GameDAO gameDAO;
         AuthDAO authDAO;
         UserDAO userDAO;
-        gameDAO = new MemoryGameDAO();
-        authDAO = new MemoryAuthDAO();
-        userDAO = new MemoryUserDAO();
+        //gameDAO = new MemoryGameDAO();
+        //authDAO = new MemoryAuthDAO();
+        //userDAO = new MemoryUserDAO();
+        gameDAO = new MySQLGameDAO();
+        authDAO = new MySQLAuthDAO();
+        userDAO = new MySQLUserDAO();
+        DatabaseManager.createDatabase();
         ChessService service;
         service = new ChessService(gameDAO, authDAO, userDAO);
         //a. need to initialize user, game, and auth DAO to pass in here
