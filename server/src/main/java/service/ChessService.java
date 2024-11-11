@@ -56,17 +56,16 @@ public class ChessService {
     }
 
     public RegisterResult addUser(UserData userData){
-        System.out.println(userDAO.getUser(userData.username()));
         if (userDAO.getUser(userData.username()) != null){
             System.out.println("Username taken");
             return new RegisterResult(null, null, "Error: already taken");
         }
-      //  else{
+        else{
             userDAO.addUser(userData);
             String authToken = generateAuthToken();
-      //      authDAO.createAuth(authToken, new AuthData(authToken, userData.username()));
+            authDAO.createAuth(authToken, new AuthData(authToken, userData.username()));
             return new RegisterResult(userData.username(), authToken, null);
-     //   }
+        }
     }
 
     public LogoutResponse logout(String authToken) {

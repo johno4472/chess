@@ -25,7 +25,7 @@ public class MySQLUserDAO implements UserDAO {
     @Override
     public UserData getUser(String username) {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT username FROM users WHERE username=?";
+            var statement = "SELECT username, password, email FROM users WHERE username=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, username);
                 try (var rs = ps.executeQuery()) {
@@ -41,13 +41,9 @@ public class MySQLUserDAO implements UserDAO {
     }
 
     public UserData readUser(ResultSet rs) throws SQLException {
-        System.out.println("In readUser");
         String username = rs.getString("username");
-        System.out.println("Got username");
-        String email = rs.getString("email");
-        System.out.println("Set all");
         String password = rs.getString("password");
-        System.out.println("Got password");
+        String email = rs.getString("email");
         return new UserData(username, password, email);
     }
 }
