@@ -25,7 +25,7 @@ public class MySQLAuthDAO implements AuthDAO {
     @Override
     public AuthData getAuth(String authToken) {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT id, json FROM auth WHERE authToken=?";
+            var statement = "SELECT authToken, username FROM auth WHERE authToken=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, authToken);
                 try (var rs = ps.executeQuery()) {
