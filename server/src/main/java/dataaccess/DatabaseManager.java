@@ -66,8 +66,8 @@ public class DatabaseManager {
                 `password` varchar(256),
                 `email` varchar(256),
                 PRIMARY KEY (`username`),
-                INDEX(`password`),
-                INDEX(`email`)
+                INDEX(password),
+                INDEX(email)
             )
             """
             ,
@@ -79,10 +79,10 @@ public class DatabaseManager {
                 `gameName` varchar(256),
                 `game` varchar(256),
                 PRIMARY KEY (`id`),
-                INDEX(`whiteUsername`),
-                INDEX(`blackUsername`),
-                INDEX(`gameName`),
-                INDEX(`game`)
+                INDEX(whiteUsername),
+                INDEX(blackUsername),
+                INDEX(gameName),
+                INDEX(game)
             )
             """
             ,
@@ -90,8 +90,8 @@ public class DatabaseManager {
             CREATE TABLE IF NOT EXISTS auth (
                 `authToken` varchar(256),
                 `username` varchar(256),
-                PRIMARY KEY (`authToken`),
-                INDEX(`username`)
+                PRIMARY KEY (authToken),
+                INDEX(username)
             )
             """
     };

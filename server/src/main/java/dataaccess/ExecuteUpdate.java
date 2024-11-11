@@ -22,12 +22,11 @@ public class ExecuteUpdate {
                     else if (param == null) ps.setNull(i + 1, NULL);
                 }
                 ps.executeUpdate();
-
-                var rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    return rs.getInt(1);
+                try (var rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
                 }
-
                 return 0;
             }
         } catch (SQLException | DataAccessException e) {

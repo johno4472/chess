@@ -18,7 +18,7 @@ public class MySQLAuthDAO implements AuthDAO {
     @Override
     public String createAuth(String authToken, AuthData authData) {
         var statement = "INSERT INTO auth (name, type, json) VALUES (?, ?, ?)";
-        var id = ExecuteUpdate.executeUpdate(statement, authToken, authData.username());
+        ExecuteUpdate.executeUpdate(statement, authToken, authData.username());
         return authToken;
     }
 
