@@ -74,15 +74,15 @@ public class DatabaseManager {
             """
             CREATE TABLE IF NOT EXISTS games (
                 `id` INT AUTO_INCREMENT,
-                `whiteUsername` varchar(256),
-                `blackUsername` varchar(256),
+                `whiteUsername` varchar(256) DEFAULT NULL,
+                `blackUsername` varchar(256) DEFAULT NULL,
                 `gameName` varchar(256),
-                `game` varchar(256),
+                `game` TEXT,
                 PRIMARY KEY (`id`),
                 INDEX(whiteUsername),
                 INDEX(blackUsername),
                 INDEX(gameName),
-                INDEX(game)
+                INDEX(game(255))
             )
             """
             ,

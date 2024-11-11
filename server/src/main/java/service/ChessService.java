@@ -78,16 +78,16 @@ public class ChessService {
         }
     }
 
-    public CreateGameResult createGame(CreateGameRequest createGameRequest){
-        // gameDAO.createGame(gameID);
+    public CreateGameResult createGame(CreateGameRequest createGameRequest) throws DataAccessException {
         AuthData authData = authDAO.getAuth(createGameRequest.authToken());
         if (authData != null){
-            int randID = generateGameID();
+            int gameID = generateGameID();
             String username = authData.username();
             GameData gameData;
-            gameData = new GameData(randID, null, null, createGameRequest.gameName(), new ChessGame());
-            gameDAO.createGame(gameData);
-            return new CreateGameResult(randID, null);
+            gameData = new GameData(gameID, null, null, createGameRequest.gameName(), new ChessGame());
+            gameID = gameDAO.createGame(gameData);
+            System.out.println(gameID);
+            return new CreateGameResult(gameID, null);
         }
         else{
             return new CreateGameResult(null, "Error: unauthorized");

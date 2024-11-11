@@ -21,10 +21,11 @@ public class MySQLGameDAO implements GameDAO {
     }
 
     @Override
-    public int createGame(GameData gameData) {
-        var statement = "INSERT INTO games (gameID, game, json) VALUES (?, ?, ?)";
-        ExecuteUpdate.executeUpdate(statement, gameData.gameID(), gameData);
-        return gameData.gameID();
+    public int createGame(GameData gameData) throws DataAccessException {
+        var statement = "INSERT INTO games (gameName, game) VALUES (?, ?)";
+        String game = new Gson().toJson(gameData.game());
+        System.out.println(game.length());
+        return ExecuteUpdate.executeUpdate(statement, gameData.gameName(), game);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package server;
 
+import dataaccess.DataAccessException;
 import model.GameData;
 import model.UserData;
 import service.ChessService;
@@ -18,7 +19,7 @@ public class CreateGameHandler {
         this.service = service;
     }
 
-    public Object createGame (Request req, Response res) {
+    public Object createGame (Request req, Response res) throws DataAccessException {
         GameData gameData = new Gson().fromJson(req.body(), GameData.class);
         String authToken = new Gson().fromJson(req.headers("authorization"), String.class);
         String gameName = gameData.gameName();
