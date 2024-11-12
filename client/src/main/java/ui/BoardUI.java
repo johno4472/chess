@@ -141,14 +141,24 @@ public class BoardUI {
         }
         else if (piece.getTeamColor().equals(ChessGame.TeamColor.WHITE)){
             out.print(SET_TEXT_COLOR_WHITE);
-            out.print(" c ");
+            out.print(pieceToString(piece.getPieceType()));
         }
         else {
             out.print(SET_TEXT_COLOR_BLACK);
-            out.print(" c ");
+            out.print(pieceToString(piece.getPieceType()));
         }
-        //getPieceTypeString(piece.getPieceType());
 
         setWhite(out);
+    }
+
+    private static String pieceToString(ChessPiece.PieceType type){
+        return switch (type) {
+            case KNIGHT -> " N ";
+            case BISHOP -> " B ";
+            case QUEEN -> " Q ";
+            case ROOK -> " R ";
+            case PAWN -> " P ";
+            case KING -> " K ";
+        };
     }
 }
