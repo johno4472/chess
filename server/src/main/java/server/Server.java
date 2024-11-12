@@ -10,7 +10,7 @@ import static dataaccess.DatabaseManager.createDatabase;
 
 public class Server {
 
-    public int run(int desiredPort) throws DataAccessException, SQLException {
+    public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         GameDAO gameDAO;
@@ -22,7 +22,11 @@ public class Server {
         gameDAO = new MySQLGameDAO();
         authDAO = new MySQLAuthDAO();
         userDAO = new MySQLUserDAO();
-        DatabaseManager.configureDatabase();
+        try {
+            DatabaseManager.configureDatabase();
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
         ChessService service;
         service = new ChessService(gameDAO, authDAO, userDAO);
         //a. need to initialize user, game, and auth DAO to pass in here
