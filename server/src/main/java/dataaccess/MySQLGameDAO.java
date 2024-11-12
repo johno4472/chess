@@ -68,7 +68,7 @@ public class MySQLGameDAO implements GameDAO {
         Collection<GameData> games;
         games = new ArrayList<>();
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT gameID, json FROM games";
+            var statement = "SELECT id, whiteUsername, blackUsername, gameName, game FROM games";
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
                     while (rs.next()) {

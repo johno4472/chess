@@ -7,6 +7,7 @@ import model.AuthData;
 import model.GameData;
 import model.SimpleGameData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import service.requestresult.*;
 
 import java.util.*;
@@ -41,7 +42,7 @@ public class ChessService {
     public LoginResult login(LoginRequest loginRequest) {
         UserData user = userDAO.getUser(loginRequest.username());
         if (user != null){
-            if (Objects.equals(user.password(), loginRequest.password())){
+            if (BCrypt.checkpw(loginRequest.password(), user.password())){
                 String authToken = generateAuthToken();
                 authDAO.createAuth(authToken, new AuthData(authToken, user.username()));
                 return new LoginResult(user.username(), authToken, null);
@@ -61,7 +62,8 @@ public class ChessService {
             return new RegisterResult(null, null, "Error: already taken");
         }
         else{
-            userDAO.addUser(userData);
+            String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
+            userDAO.addUser(new UserData(userData.username(), hashedPassword, userData.email()));
             String authToken = generateAuthToken();
             authDAO.createAuth(authToken, new AuthData(authToken, userData.username()));
             return new RegisterResult(userData.username(), authToken, null);
