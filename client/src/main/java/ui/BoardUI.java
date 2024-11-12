@@ -18,10 +18,6 @@ public class BoardUI {
 
     // Padded characters.
     private static final String EMPTY = "   ";
-    private static final String X = " X ";
-    private static final String O = " O ";
-
-    private static Random rand = new Random();
 
     private static int row = 0;
     private static int whiteView = 1;
@@ -78,6 +74,7 @@ public class BoardUI {
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
 
             drawRowOfSquares(out);
+            colorCount += 1;
         }
     }
 
@@ -87,7 +84,7 @@ public class BoardUI {
 
         for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_PADDED_CHARS; ++squareRow) {
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES - 2; ++boardCol) {
-                setWhite(out);
+                setBoxColor(out);
                 printPlayer(out, board.getPiece(new ChessPosition(squareRow + 1, boardCol + 1)));
 
                 setBlack(out);
@@ -99,6 +96,17 @@ public class BoardUI {
 
             out.println();
         }
+    }
+
+    private static void setBoxColor(PrintStream out) {
+        colorCount %= 2;
+        if (colorCount == 0) {
+            out.print(SET_BG_COLOR_LIGHT_GREY);
+        }
+        else {
+            out.print(SET_BG_COLOR_BLUE);
+        }
+        colorCount += 1;
     }
 
     private static void printRowHeader(PrintStream out) {
@@ -137,9 +145,8 @@ public class BoardUI {
         else {
             out.print(SET_TEXT_COLOR_BLACK);
         }
-
-        piece.getPieceType()
-        out.print(player);
+        //getPieceTypeString(piece.getPieceType());
+        out.print(EMPTY);
 
         setWhite(out);
     }
