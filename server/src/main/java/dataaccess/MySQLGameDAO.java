@@ -21,14 +21,14 @@ public class MySQLGameDAO implements GameDAO {
     }
 
     @Override
-    public int createGame(GameData gameData) throws DataAccessException {
+    public int createGame(GameData gameData) {
         var statement = "INSERT INTO games (gameName, game) VALUES (?, ?)";
         String game = new Gson().toJson(gameData.game());
         return ExecuteUpdate.executeUpdate(statement, gameData.gameName(), game);
     }
 
     @Override
-    public GameData getGame(int gameID) throws DataAccessException {
+    public GameData getGame(int gameID) {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT id, whiteUsername, blackUsername, gameName, game FROM games WHERE id=?";
             try (var ps = conn.prepareStatement(statement)) {
@@ -39,20 +39,25 @@ public class MySQLGameDAO implements GameDAO {
                     }
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
         return null;
     }
 
-    public GameData readGame(ResultSet rs) throws SQLException {
-        int gameID = rs.getInt("id");
-        String whiteUsername = rs.getString("whiteUsername");
-        String blackUsername = rs.getString("blackUsername");
-        String gameName = rs.getString("gameName");
-        var jsonGame = rs.getString("game");
-        ChessGame game = new Gson().fromJson(jsonGame, ChessGame.class);
-        return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
+    private GameData readGame(ResultSet rs) {
+        int gameID = 0;
+        try {
+            gameID = rs.getInt("id");
+            String whiteUsername = rs.getString("whiteUsername");
+            String blackUsername = rs.getString("blackUsername");
+            String gameName = rs.getString("gameName");
+            var jsonGame = rs.getString("game");
+            ChessGame game = new Gson().fromJson(jsonGame, ChessGame.class);
+            return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -64,7 +69,7 @@ public class MySQLGameDAO implements GameDAO {
     }
 
     @Override
-    public Collection<GameData> listGames() throws DataAccessException {
+    public Collection<GameData> listGames() {
         Collection<GameData> games;
         games = new ArrayList<>();
         try (var conn = DatabaseManager.getConnection()) {
@@ -76,7 +81,7 @@ public class MySQLGameDAO implements GameDAO {
                     }
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
         return games;

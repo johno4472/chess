@@ -19,9 +19,8 @@ public class MySQLUserDAO implements UserDAO {
 
     @Override
     public void addUser(UserData user) {
-        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
         var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-        ExecuteUpdate.executeUpdate(statement, user.username(), hashedPassword, user.email());
+        ExecuteUpdate.executeUpdate(statement, user.username(), user.password(), user.email());
     }
 
     @Override
@@ -42,7 +41,7 @@ public class MySQLUserDAO implements UserDAO {
         return null;
     }
 
-    public UserData readUser(ResultSet rs) throws SQLException {
+    private UserData readUser(ResultSet rs) throws SQLException {
         String username = rs.getString("username");
         String password = rs.getString("password");
         String email = rs.getString("email");

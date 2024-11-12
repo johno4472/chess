@@ -62,7 +62,8 @@ public class ChessService {
             return new RegisterResult(null, null, "Error: already taken");
         }
         else{
-            userDAO.addUser(userData);
+            String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
+            userDAO.addUser(new UserData(userData.username(), hashedPassword, userData.email()));
             String authToken = generateAuthToken();
             authDAO.createAuth(authToken, new AuthData(authToken, userData.username()));
             return new RegisterResult(userData.username(), authToken, null);
@@ -79,15 +80,17 @@ public class ChessService {
         }
     }
 
-    public CreateGameResult createGame(CreateGameRequest createGameRequest) throws DataAccessException {
+    public CreateGameResult createGame(CreateGameRequest createGameRequest) {
         AuthData authData = authDAO.getAuth(createGameRequest.authToken());
         if (authData != null){
             int gameID = generateGameID();
-            String username = authData.username();
             GameData gameData;
             gameData = new GameData(gameID, null, null, createGameRequest.gameName(), new ChessGame());
-            gameID = gameDAO.createGame(gameData);
-            System.out.println(gameID);
+            try {
+                gameID = gameDAO.createGame(gameData);
+            } catch (DataAccessException e) {
+                throw new RuntimeException(e);
+            }
             return new CreateGameResult(gameID, null);
         }
         else{
@@ -95,11 +98,15 @@ public class ChessService {
         }
     }
 
-    public ListGamesResult listGames(String authToken) throws DataAccessException {
+    public ListGamesResult listGames(String authToken) {
         AuthData authData = authDAO.getAuth(authToken);
         if (authData != null){
             Collection<GameData> gamesList;
-            gamesList = gameDAO.listGames();
+            try {
+                gamesList = gameDAO.listGames();
+            } catch (DataAccessException e) {
+                throw new RuntimeException(e);
+            }
             Collection<SimpleGameData> simpleGamesList = new ArrayList<>();
             for (GameData gameData: gamesList){
                 int gameID = gameData.gameID();
@@ -116,36 +123,40 @@ public class ChessService {
         }
     }
 
-    public JoinGameResult joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
+    public JoinGameResult joinGame(JoinGameRequest joinGameRequest) {
         AuthData authData = authDAO.getAuth(joinGameRequest.authToken());
         int gameID = joinGameRequest.gameID();
         if (authData != null) {
-            if (gameDAO.getGame(gameID) != null){
-                GameData gameData;
-                gameData = gameDAO.getGame(gameID);
-                ChessGame.TeamColor playerColor;
-                playerColor = joinGameRequest.playerColor();
+            try {
+                if (gameDAO.getGame(gameID) != null){
+                    GameData gameData;
+                    gameData = gameDAO.getGame(gameID);
+                    ChessGame.TeamColor playerColor;
+                    playerColor = joinGameRequest.playerColor();
 
-                if (gameData.blackUsername() == null && playerColor == ChessGame.TeamColor.BLACK){
-                    GameData gameUpdate;
-                    gameUpdate = new GameData(gameID, gameData.whiteUsername(), authData.username(),
-                            gameData.gameName(), gameData.game());
-                    gameDAO.updateGame(gameID, gameUpdate);
-                    return new JoinGameResult(null);
-                }
-                else if(gameData.whiteUsername() == null && playerColor == ChessGame.TeamColor.WHITE) {
-                    GameData gameUpdate;
-                    gameUpdate = new GameData(gameID, authData.username(), gameData.blackUsername(),
-                            gameData.gameName(), gameData.game());
-                    gameDAO.updateGame(gameID, gameUpdate);
-                    return new JoinGameResult(null);
+                    if (gameData.blackUsername() == null && playerColor == ChessGame.TeamColor.BLACK){
+                        GameData gameUpdate;
+                        gameUpdate = new GameData(gameID, gameData.whiteUsername(), authData.username(),
+                                gameData.gameName(), gameData.game());
+                        gameDAO.updateGame(gameID, gameUpdate);
+                        return new JoinGameResult(null);
+                    }
+                    else if(gameData.whiteUsername() == null && playerColor == ChessGame.TeamColor.WHITE) {
+                        GameData gameUpdate;
+                        gameUpdate = new GameData(gameID, authData.username(), gameData.blackUsername(),
+                                gameData.gameName(), gameData.game());
+                        gameDAO.updateGame(gameID, gameUpdate);
+                        return new JoinGameResult(null);
+                    }
+                    else {
+                        return new JoinGameResult("Error: already taken");
+                    }
                 }
                 else {
-                    return new JoinGameResult("Error: already taken");
+                    return new JoinGameResult("Error: bad request");
                 }
-            }
-            else {
-                return new JoinGameResult("Error: bad request");
+            } catch (DataAccessException e) {
+                throw new RuntimeException(e);
             }
         }
         else {

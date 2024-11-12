@@ -40,7 +40,7 @@ public class MySQLAuthDAO implements AuthDAO {
         return null;
     }
 
-    public AuthData readAuthData(ResultSet rs) throws SQLException {
+    private AuthData readAuthData(ResultSet rs) throws SQLException {
         String username = rs.getString("username");
         String authToken = rs.getString("authToken");
         return new AuthData(authToken, username);

@@ -6,6 +6,7 @@ import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 import service.requestresult.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,14 +37,18 @@ class ChessServiceTest {
 
     @Test
     void loginPositive() {
-        userDAO.addUser(new UserData("user", "password", "email"));
+        UserData user = new UserData("user", "password", "email");
+        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        userDAO.addUser(new UserData("user", hashedPassword, "email"));
         LoginResult result = service.login(new LoginRequest("user", "password"));
         assertEquals(result.username(), "user");
     }
 
     @Test
     void loginNegative() {
-        userDAO.addUser(new UserData("user", "password", "email"));
+        UserData user = new UserData("user", "password", "email");
+        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        userDAO.addUser(new UserData("user", hashedPassword, "email"));
         LoginResult result = service.login(new LoginRequest("user", "wrongPassword"));
         assertEquals(result.message(), "Error: unauthorized");
     }
