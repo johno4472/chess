@@ -71,26 +71,26 @@ public class BoardUI {
 
     private static void drawChessBoard(PrintStream out) {
 
-        for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
+        for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES - 2; ++boardRow) {
 
-            drawRowOfSquares(out);
+            drawRowOfSquares(out, boardRow);
             colorCount += 1;
         }
     }
 
-    private static void drawRowOfSquares(PrintStream out) {
+    private static void drawRowOfSquares(PrintStream out, int boardRow) {
 
-        printRowHeader(out);
+        printRowHeader(out, boardRow + 1);
 
         for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_PADDED_CHARS; ++squareRow) {
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES - 2; ++boardCol) {
                 setBoxColor(out);
-                printPlayer(out, board.getPiece(new ChessPosition(squareRow + 1, boardCol + 1)));
+                printPlayer(out, board.getPiece(new ChessPosition(boardRow + 1, boardCol + 1)));
 
                 setBlack(out);
             }
 
-            printRowHeader(out);
+            printRowHeader(out, boardRow + 1);
             row += 1;
             setBlack(out);
 
@@ -109,8 +109,8 @@ public class BoardUI {
         colorCount += 1;
     }
 
-    private static void printRowHeader(PrintStream out) {
-        String rowString = " " + row + " ";
+    private static void printRowHeader(PrintStream out, int boardRow) {
+        String rowString = " " + boardRow + " ";
         printHeaderText(out, rowString);
     }
 
@@ -141,12 +141,13 @@ public class BoardUI {
         }
         else if (piece.getTeamColor().equals(ChessGame.TeamColor.WHITE)){
             out.print(SET_TEXT_COLOR_WHITE);
+            out.print(" c ");
         }
         else {
             out.print(SET_TEXT_COLOR_BLACK);
+            out.print(" c ");
         }
         //getPieceTypeString(piece.getPieceType());
-        out.print(EMPTY);
 
         setWhite(out);
     }
