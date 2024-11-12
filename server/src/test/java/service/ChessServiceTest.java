@@ -85,7 +85,7 @@ class ChessServiceTest {
     }
 
     @Test
-    void createGameNegative() {
+    void createGameNegative() throws DataAccessException {
         authDAO.createAuth("authToken", new AuthData("authToken", "user"));
         CreateGameResult result = service.createGame(new CreateGameRequest("gameName",
                 "wrongAuthToken"));

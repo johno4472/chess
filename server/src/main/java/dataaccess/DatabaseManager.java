@@ -81,8 +81,7 @@ public class DatabaseManager {
                 PRIMARY KEY (`id`),
                 INDEX(whiteUsername),
                 INDEX(blackUsername),
-                INDEX(gameName),
-                INDEX(game(255))
+                INDEX(gameName)
             )
             """
             ,

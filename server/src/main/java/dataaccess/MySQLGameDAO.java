@@ -24,14 +24,13 @@ public class MySQLGameDAO implements GameDAO {
     public int createGame(GameData gameData) throws DataAccessException {
         var statement = "INSERT INTO games (gameName, game) VALUES (?, ?)";
         String game = new Gson().toJson(gameData.game());
-        System.out.println(game.length());
         return ExecuteUpdate.executeUpdate(statement, gameData.gameName(), game);
     }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT gameId, json FROM games WHERE id=?";
+            var statement = "SELECT id, whiteUsername, blackUsername, gameName, game FROM games WHERE id=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setInt(1, gameID);
                 try (var rs = ps.executeQuery()) {
@@ -47,7 +46,7 @@ public class MySQLGameDAO implements GameDAO {
     }
 
     public GameData readGame(ResultSet rs) throws SQLException {
-        int gameID = rs.getInt("gameID");
+        int gameID = rs.getInt("id");
         String whiteUsername = rs.getString("whiteUsername");
         String blackUsername = rs.getString("blackUsername");
         String gameName = rs.getString("gameName");
@@ -58,7 +57,10 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public void updateGame(int gameID, GameData gameData) {
-
+        var statement = "UPDATE games SET whiteUsername = ?, blackUsername = ?," +
+                " gameName = ? Where id = ?";
+        ExecuteUpdate.executeUpdate(statement, gameData.whiteUsername(),
+                gameData.blackUsername(), gameData.gameName(), gameData.gameID());
     }
 
     @Override
