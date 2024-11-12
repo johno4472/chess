@@ -7,7 +7,6 @@ import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Random;
 
 import static ui.EscapeSequences.*;
 
@@ -55,7 +54,7 @@ public class BoardUI {
 
         out.print(EMPTY.repeat(LINE_WIDTH_IN_PADDED_CHARS));
 
-        setBlack(out);
+        setDarkGrey(out);
 
         out.println();
     }
@@ -87,12 +86,12 @@ public class BoardUI {
                 setBoxColor(out);
                 printPlayer(out, board.getPiece(new ChessPosition(boardRow + 1, boardCol + 1)));
 
-                setBlack(out);
+                setDarkGrey(out);
             }
 
             printRowHeader(out, boardRow + 1);
             row += 1;
-            setBlack(out);
+            setDarkGrey(out);
 
             out.println();
         }
@@ -129,9 +128,9 @@ public class BoardUI {
         out.print(SET_TEXT_COLOR_MAGENTA);
     }
 
-    private static void setBlack(PrintStream out) {
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_BLACK);
+    private static void setDarkGrey(PrintStream out) {
+        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print(SET_TEXT_COLOR_DARK_GREY);
     }
 
     private static void printPlayer(PrintStream out, ChessPiece piece) {
