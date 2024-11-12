@@ -3,10 +3,9 @@ package server;
 import com.google.gson.Gson;
 import model.UserData;
 import service.ChessService;
-import service.requestresult.RegisterResult;
+import model.requestresult.RegisterResult;
 import spark.Request;
 import spark.Response;
-import model.requestresult.RegisterResult;
 
 public class RegisterHandler {
 

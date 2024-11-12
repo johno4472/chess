@@ -1,3 +1,3 @@
-package service.requestresult;
+package model.requestresult;
 
 public record ClearResult (String message) {}

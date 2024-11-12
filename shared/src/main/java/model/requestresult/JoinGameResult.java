@@ -1,4 +1,4 @@
-package service.requestresult;
+package model.requestresult;
 
 public record JoinGameResult(String message) {
 }

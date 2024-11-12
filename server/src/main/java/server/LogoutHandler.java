@@ -3,7 +3,7 @@ package server;
 import com.google.gson.Gson;
 import model.AuthData;
 import service.ChessService;
-import service.requestresult.LogoutResponse;
+import model.requestresult.LogoutResponse;
 import spark.Request;
 import spark.Response;
 

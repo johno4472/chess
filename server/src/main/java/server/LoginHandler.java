@@ -2,8 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import service.ChessService;
-import service.requestresult.LoginRequest;
-import service.requestresult.LoginResult;
+import model.requestresult.LoginRequest;
+import model.requestresult.LoginResult;
 import spark.Request;
 import spark.Response;
 
