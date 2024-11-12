@@ -6,6 +6,7 @@ import service.ChessService;
 import service.requestresult.RegisterResult;
 import spark.Request;
 import spark.Response;
+import model.requestresult.RegisterResult;
 
 public class RegisterHandler {
 
