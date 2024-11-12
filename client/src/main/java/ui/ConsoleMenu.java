@@ -39,9 +39,11 @@ public class ConsoleMenu {
                         break;
                     case "3":
                         joinGame();
+                        //BoardUI.buildBoard();
                         break;
                     case "4":
                         observeGame();
+                        //BoardUI.buildBoard();
                         break;
                     case "5":
                         logout();
