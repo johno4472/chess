@@ -62,8 +62,7 @@ public class ChessService {
             return new RegisterResult(null, null, "Error: already taken");
         }
         else{
-            String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
-            userDAO.addUser(new UserData(userData.username(), hashedPassword, userData.email()));
+            userDAO.addUser(userData);
             String authToken = generateAuthToken();
             authDAO.createAuth(authToken, new AuthData(authToken, userData.username()));
             return new RegisterResult(userData.username(), authToken, null);
