@@ -1,7 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import service.requestresult.ClearResult;
+import model.requestresult.ClearResult;
 import spark.Request;
 import spark.Response;
 import service.ChessService;

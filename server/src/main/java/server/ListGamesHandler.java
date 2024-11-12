@@ -3,7 +3,7 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import service.ChessService;
-import service.requestresult.ListGamesResult;
+import model.requestresult.ListGamesResult;
 import spark.Request;
 import spark.Response;
 

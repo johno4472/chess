@@ -2,11 +2,9 @@ package server;
 
 import dataaccess.DataAccessException;
 import model.GameData;
-import model.UserData;
 import service.ChessService;
-import service.requestresult.CreateGameRequest;
-import service.requestresult.CreateGameResult;
-import service.requestresult.RegisterResult;
+import model.requestresult.CreateGameRequest;
+import model.requestresult.CreateGameResult;
 import spark.Request;
 import spark.Response;
 import com.google.gson.Gson;

@@ -3,11 +3,10 @@ package server;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
-import model.GameData;
 import model.JoinGameOptions;
 import service.ChessService;
-import service.requestresult.JoinGameRequest;
-import service.requestresult.JoinGameResult;
+import model.requestresult.JoinGameRequest;
+import model.requestresult.JoinGameResult;
 import spark.Request;
 import spark.Response;
 

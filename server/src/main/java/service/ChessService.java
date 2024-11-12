@@ -8,7 +8,7 @@ import model.GameData;
 import model.SimpleGameData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-import service.requestresult.*;
+import model.requestresult.*;
 
 import java.util.*;
 
