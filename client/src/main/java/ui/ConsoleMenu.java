@@ -2,6 +2,7 @@ package ui;
 
 import chess.ChessGame;
 import model.requestresult.*;
+import network.ServerFacade;
 
 import java.util.Scanner;
 
