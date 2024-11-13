@@ -1,10 +1,12 @@
 package ui;
 
 import chess.ChessGame;
+import model.SimpleGameData;
 import model.UserData;
 import model.requestresult.*;
 import network.ServerFacade;
 
+import java.util.Collection;
 import java.util.Scanner;
 
 public class ConsoleMenu {
@@ -27,6 +29,11 @@ public class ConsoleMenu {
 
     private void runConsole() {
         while (!quit){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             System.out.println("What would you like to do? (Select the number of the option you prefer)");
             if (loggedIn){
                 System.out.println("1. Create Game\n2. List Games\n3. Join Game\n4. Observe Game\n5. Logout\n6. Quit\n7. Help");
@@ -111,11 +118,18 @@ public class ConsoleMenu {
         System.out.println("Enter gameName: ");
         String gameName = scanner.nextLine();
 
-        serverFacade.createGame(new CreateGameRequest(gameName, authToken));
+        CreateGameResponse response = serverFacade.createGame(new CreateGameRequest(gameName, authToken));
+        System.out.println("Game created. Game ID is: " + response.gameID());
     }
 
     private void listGames() {
-        serverFacade.listGames(new ListGamesRequest(authToken));
+        ListGamesResponse response = serverFacade.listGames(new ListGamesRequest(authToken));
+        Collection<SimpleGameData> games = response.games();
+        for (SimpleGameData game: games){
+            System.out.println("Game ID: " + game.gameID() + ",  White Username: " + game.whiteUsername() +
+                    ",  Black Username: " + game.blackUsername() + ",  Game Name: " + game.gameName() + ";");
+        }
+        System.out.println();
     }
 
     private void joinGame() {
