@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import model.SimpleGameData;
 import model.UserData;
@@ -52,7 +53,6 @@ public class ConsoleMenu {
                         break;
                     case "4":
                         observeGame();
-                        //BoardUI.buildBoard();
                         break;
                     case "5":
                         logout();
@@ -133,6 +133,7 @@ public class ConsoleMenu {
     }
 
     private void joinGame() {
+        System.out.println("Enter the ID number of the game you'd like to join.");
         String gameID = scanner.nextLine();
         System.out.println("Would you like to be: white/black?");
         String colorChoice = scanner.nextLine();
@@ -149,7 +150,10 @@ public class ConsoleMenu {
                 System.out.println("Invalid entry. Please enter one of the two options as shown.");
             }
         }
-        serverFacade.joinGame(new JoinGameRequest(color, Integer.parseInt(gameID), authToken));
+        JoinGameResponse response = serverFacade.joinGame(new JoinGameRequest(
+                color, Integer.parseInt(gameID), authToken));
+        BoardUI.main(new ChessGame().getBoard());
+
     }
 
     private void observeGame() {

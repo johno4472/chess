@@ -22,14 +22,14 @@ public class BoardUI {
     private static int whiteView = 1;
     private static int colorCount = 0;
     private static String squareColor = "White";
-    private static ChessBoard board = new ChessGame().getBoard();
+    private static ChessBoard board;
 
     private static final String [] COLUMNS_IN_ORDER = {"a", "b", "c", "d", "e", "f", "g", "h"};
 
 
-    public static void main(String[] args) {
+    public static void main(ChessBoard chessBoard) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-
+        board = chessBoard;
         out.print(ERASE_SCREEN);
 
         drawTopOrBottom(out);
