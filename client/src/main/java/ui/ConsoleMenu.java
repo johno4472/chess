@@ -26,9 +26,8 @@ public class ConsoleMenu {
     }
 
     private void runConsole() {
-        System.out.println("What would you like to do? (Select the number of the option you prefer)");
-
         while (!quit){
+            System.out.println("What would you like to do? (Select the number of the option you prefer)");
             if (loggedIn){
                 System.out.println("1. Create Game\n2. List Games\n3. Join Game\n4. Observe Game\n5. Logout\n6. Quit\n7. Help");
 
@@ -79,6 +78,7 @@ public class ConsoleMenu {
                 }
             }
         }
+        System.out.println("'til we meet again!");
     }
 
     private void register() {
@@ -89,7 +89,9 @@ public class ConsoleMenu {
         System.out.println("Enter email: ");
         String email = scanner.nextLine();
 
-        serverFacade.register(new UserData(username, password, email));
+        RegisterResponse response = serverFacade.register(new UserData(username, password, email));
+        System.out.println("Registered. Welcome " + response.username() + "!\n");
+        authToken = response.authToken();
         loggedIn = true;
     }
 
@@ -99,7 +101,9 @@ public class ConsoleMenu {
         System.out.println("Enter password: ");
         String password = scanner.nextLine();
 
-        serverFacade.login(new LoginRequest(username, password));
+        LoginResponse response = serverFacade.login(new LoginRequest(username, password));
+        authToken = response.authToken();
+        System.out.println("Logged in. Welcome " + username + "!\n");
         loggedIn = true;
     }
 
@@ -142,11 +146,8 @@ public class ConsoleMenu {
 
     private void logout() {
         serverFacade.logout(authToken);
+        System.out.println("Logged out. See ya later!\n");
         loggedIn = false;
-    }
-
-    private void quit() {
-        return;
     }
 
     private void help() {

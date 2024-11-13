@@ -20,7 +20,7 @@ public class HTTPCommunicator {
         }
     }
 
-    public InputStreamReader get(String authToken, String urlPath) {
+    public InputStream get(String authToken, String urlPath) {
         //create url
         HttpURLConnection http = getURLConnection(urlPath);
         try {
@@ -34,15 +34,14 @@ public class HTTPCommunicator {
             http.connect();
 
             //get and return json response
-            try (InputStream respBody = http.getInputStream()){
-                return new InputStreamReader(respBody);
-            }
+            return http.getInputStream();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public InputStreamReader put(String authToken, String jsonBody, String urlPath) {
+    public InputStream put(String authToken, String jsonBody, String urlPath) {
         //create url
         HttpURLConnection http = getURLConnection(urlPath);
         try {
@@ -60,15 +59,14 @@ public class HTTPCommunicator {
             http.connect();
 
             //get and return json response
-            try (InputStream respBody = http.getInputStream()){
-                return new InputStreamReader(respBody);
-            }
+            return http.getInputStream();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public InputStreamReader delete(String authToken, String urlPath) {
+    public InputStream delete(String authToken, String urlPath) {
         //create url
         HttpURLConnection http = getURLConnection(urlPath);
         try {
@@ -81,9 +79,8 @@ public class HTTPCommunicator {
             http.connect();
 
             //get and return json response
-            try (InputStream respBody = http.getInputStream()){
-                return new InputStreamReader(respBody);
-            }
+            return http.getInputStream();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

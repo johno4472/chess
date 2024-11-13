@@ -29,21 +29,21 @@ public class ServerFacade {
     }
 
     public ListGamesResponse listGames(ListGamesRequest request) {
-        InputStreamReader json = httpCommunicator.get(request.authToken(), "/game");
-        return new Gson().fromJson(json, ListGamesResponse.class);
+        InputStream json = httpCommunicator.get(request.authToken(), "/game");
+        return new Gson().fromJson(new InputStreamReader(json), ListGamesResponse.class);
     }
 
     public JoinGameResponse joinGame(JoinGameRequest request) {
-        InputStreamReader json = httpCommunicator.put(request.authToken(), new Gson().toJson(request), "/game");
-        return new Gson().fromJson(json, JoinGameResponse.class);
+        InputStream json = httpCommunicator.put(request.authToken(), new Gson().toJson(request), "/game");
+        return new Gson().fromJson(new InputStreamReader(json), JoinGameResponse.class);
     }
 
     public void observeGame(int gameID) {
     }
 
     public LogoutResponse logout(String authToken) {
-        InputStreamReader json = httpCommunicator.delete(authToken, "/session");
-        return new Gson().fromJson(json, LogoutResponse.class);
+        InputStream json = httpCommunicator.delete(authToken, "/session");
+        return new Gson().fromJson(new InputStreamReader(json), LogoutResponse.class);
     }
 }
 
