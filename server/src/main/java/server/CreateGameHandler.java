@@ -4,7 +4,7 @@ import dataaccess.DataAccessException;
 import model.GameData;
 import service.ChessService;
 import model.requestresult.CreateGameRequest;
-import model.requestresult.CreateGameResult;
+import model.requestresult.CreateGameResponse;
 import spark.Request;
 import spark.Response;
 import com.google.gson.Gson;
@@ -22,16 +22,16 @@ public class CreateGameHandler {
         String authToken = new Gson().fromJson(req.headers("authorization"), String.class);
         String gameName = gameData.gameName();
 
-        CreateGameResult createGameResult;
-        createGameResult = service.createGame(new CreateGameRequest(gameName, authToken));
+        CreateGameResponse createGameResponse;
+        createGameResponse = service.createGame(new CreateGameRequest(gameName, authToken));
 
-        if (createGameResult.gameID() == null){
+        if (createGameResponse.gameID() == null){
             res.status(401);
         }
         else {
             res.status(200);
         }
-        return new Gson().toJson(createGameResult);
+        return new Gson().toJson(createGameResponse);
 //        return new Gson().toJson(createGameResult);
     }
 }

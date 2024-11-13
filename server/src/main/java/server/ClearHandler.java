@@ -1,7 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import model.requestresult.ClearResult;
+import model.requestresult.ClearResponse;
 import spark.Request;
 import spark.Response;
 import service.ChessService;
@@ -22,7 +22,7 @@ public class ClearHandler {
         service.clear();
         res.status(200);
         //all three interfaces have clear function in them
-        ClearResult clearResult = new ClearResult(null);
-        return new Gson().toJson(clearResult);
+        ClearResponse clearResponse = new ClearResponse(null);
+        return new Gson().toJson(clearResponse);
     }
 }

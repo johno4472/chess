@@ -6,7 +6,7 @@ import dataaccess.DataAccessException;
 import model.JoinGameOptions;
 import service.ChessService;
 import model.requestresult.JoinGameRequest;
-import model.requestresult.JoinGameResult;
+import model.requestresult.JoinGameResponse;
 import spark.Request;
 import spark.Response;
 
@@ -24,13 +24,13 @@ public class JoinGameHandler {
 
         if (options.playerColor() != ChessGame.TeamColor.BLACK && options.playerColor() != ChessGame.TeamColor.WHITE){
             res.status(400);
-            return new Gson().toJson(new JoinGameResult("Error: bad color request"));
+            return new Gson().toJson(new JoinGameResponse("Error: bad color request"));
         }
 
-        JoinGameResult joinGameResult;
-        joinGameResult = service.joinGame(new JoinGameRequest(options.playerColor(), options.gameID(), authToken));
+        JoinGameResponse joinGameResponse;
+        joinGameResponse = service.joinGame(new JoinGameRequest(options.playerColor(), options.gameID(), authToken));
 
-        String message = joinGameResult.message();
+        String message = joinGameResponse.message();
         switch (message) {
             case "Error: bad request":
                 res.status(400);
@@ -47,6 +47,6 @@ public class JoinGameHandler {
             default:
                 throw new IllegalStateException("Unexpected value: " + message);
         }
-        return new Gson().toJson(joinGameResult);
+        return new Gson().toJson(joinGameResponse);
     }
 }

@@ -1,74 +1,43 @@
 package network;
 
 import com.google.gson.Gson;
+import model.UserData;
 import model.requestresult.*;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.*;
-import java.util.Map;
 
 public class ServerFacade {
 
-    public void register(RegisterResult request) {
-        // Specify the desired endpoint
-        URI uri = null;
-        try {
-            uri = new URI("http://localhost:8080/name");
-            HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
-            http.setRequestMethod("PUT");
+    public RegisterResponse register(UserData userData) {
+        String json = HTTPCommunicator.post(null, new Gson().toJson(userData), "/user");
+        return new Gson().fromJson(json, RegisterResponse.class);
+    }
 
-            // Specify that we are going to write out data
-            http.setDoOutput(true);
-
-            // Write out a header
-            http.addRequestProperty("Content-Type", "application/json");
-
-            // Write out the body
-            var body = Map.of("bud", "joe", "sue", "tom");
-            try (var outputStream = http.getOutputStream()) {
-                var jsonBody = new Gson().toJson(body);
-                outputStream.write(jsonBody.getBytes());
-            }
-
-            // Make the request
-            http.connect();
-
-            // Output the response body
-            try (InputStream respBody = http.getInputStream()) {
-                InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-                System.out.println(new Gson().fromJson(inputStreamReader, Map.class));
-            }
-        } catch (URISyntaxException | IOException e) {
-            throw new RuntimeException(e);
-        }
-
+    public LoginResponse login(LoginRequest request) {
+        String json = HTTPCommunicator.post(null, new Gson().toJson(request), "/session");
+        return new Gson().fromJson(json, LoginResponse.class);
 
     }
 
-    public void login(LoginRequest request) {
-
+    public CreateGameResponse createGame(CreateGameRequest request){
+        String json = HTTPCommunicator.post(request.authToken(), new Gson().toJson(request), "/game");
+        return new Gson().fromJson(json, CreateGameResponse.class);
     }
 
-    public void createGame(CreateGameRequest request){
-
+    public ListGamesResponse listGames(ListGamesRequest request) {
+        String json = HTTPCommunicator.get(request.authToken(), "/game");
+        return new Gson().fromJson(json, ListGamesResponse.class);
     }
 
-    public void listGames(ListGamesRequest request) {
-
-    }
-
-    public void joinGame(JoinGameRequest request) {
-
+    public JoinGameResponse joinGame(JoinGameRequest request) {
+        String json = HTTPCommunicator.put(request.authToken(), new Gson().toJson(request), "/game");
+        return new Gson().fromJson(json, JoinGameResponse.class);
     }
 
     public void observeGame(int gameID) {
-
     }
 
-    public void logout(String authToken) {
-
+    public LogoutResponse logout(String authToken) {
+        String json = HTTPCommunicator.delete(authToken, "/session");
+        return new Gson().fromJson(json, LogoutResponse.class);
     }
 }
 

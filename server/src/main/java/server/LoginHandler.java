@@ -3,7 +3,7 @@ package server;
 import com.google.gson.Gson;
 import service.ChessService;
 import model.requestresult.LoginRequest;
-import model.requestresult.LoginResult;
+import model.requestresult.LoginResponse;
 import spark.Request;
 import spark.Response;
 
@@ -22,10 +22,10 @@ public class LoginHandler {
         //d. Service will call a dataaccess method to create an Authtoken
         //e. Dataaccess returns authtoken to service, which returns to handler, which creates
         // a loginresponse object with the username and authtoken and message
-        LoginResult loginResult;
-        loginResult = service.login(loginRequest);
+        LoginResponse loginResponse;
+        loginResponse = service.login(loginRequest);
         // that gets sent to my server
-        if (loginResult.username() != null){
+        if (loginResponse.username() != null){
             res.status(200);
         }
         else {
@@ -33,6 +33,6 @@ public class LoginHandler {
         }
         //res.status(); // <- this is the status
         //make login result in service and send to handler
-        return new Gson().toJson(loginResult);
+        return new Gson().toJson(loginResponse);
     }
 }

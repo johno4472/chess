@@ -3,7 +3,7 @@ package server;
 import com.google.gson.Gson;
 import model.UserData;
 import service.ChessService;
-import model.requestresult.RegisterResult;
+import model.requestresult.RegisterResponse;
 import spark.Request;
 import spark.Response;
 
@@ -19,16 +19,16 @@ public class RegisterHandler {
         UserData userData = new Gson().fromJson(req.body(), UserData.class);
         if (userData.username() == null || userData.password() == null || userData.email() == null){
             res.status(400);
-            return new Gson().toJson(new RegisterResult(null, null, "Error: bad request"));
+            return new Gson().toJson(new RegisterResponse(null, null, "Error: bad request"));
         }
-        RegisterResult registerResult;
-        registerResult = service.addUser(userData);
-        if (registerResult.username() != null){
+        RegisterResponse registerResponse;
+        registerResponse = service.addUser(userData);
+        if (registerResponse.username() != null){
             res.status(200);
         }
         else{
             res.status(403);
         }
-        return new Gson().toJson(registerResult);
+        return new Gson().toJson(registerResponse);
     }
 }

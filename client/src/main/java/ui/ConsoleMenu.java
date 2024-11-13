@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessGame;
+import model.UserData;
 import model.requestresult.*;
 import network.ServerFacade;
 
@@ -12,6 +13,7 @@ public class ConsoleMenu {
     String authToken;
     Scanner scanner;
     Boolean quit = false;
+
 
     public ConsoleMenu() {
         System.out.println("Welcome to 240 Chess!!");
@@ -87,7 +89,7 @@ public class ConsoleMenu {
         System.out.println("Enter email: ");
         String email = scanner.nextLine();
 
-        serverFacade.register(new RegisterResult(username, password, email));
+        serverFacade.register(new UserData(username, password, email));
         loggedIn = true;
     }
 
@@ -149,6 +151,10 @@ public class ConsoleMenu {
 
     private void help() {
         System.out.println("Help yourself! I've got enough to figure out here");
+    }
+
+    public String getAuth() {
+        return authToken;
     }
 
 }

@@ -39,34 +39,34 @@ public class ChessService {
         userDAO.clear();
     }
 
-    public LoginResult login(LoginRequest loginRequest) {
+    public LoginResponse login(LoginRequest loginRequest) {
         UserData user = userDAO.getUser(loginRequest.username());
         if (user != null){
             if (BCrypt.checkpw(loginRequest.password(), user.password())){
                 String authToken = generateAuthToken();
                 authDAO.createAuth(authToken, new AuthData(authToken, user.username()));
-                return new LoginResult(user.username(), authToken, null);
+                return new LoginResponse(user.username(), authToken, null);
             }
             else{
-                return new LoginResult(null, null, "Error: unauthorized");
+                return new LoginResponse(null, null, "Error: unauthorized");
             }
         }
         else {
-            return new LoginResult(null, null, "Error: No user found with this name");
+            return new LoginResponse(null, null, "Error: No user found with this name");
         }
     }
 
-    public RegisterResult addUser(UserData userData){
+    public RegisterResponse addUser(UserData userData){
         if (userDAO.getUser(userData.username()) != null){
             System.out.println("Username taken");
-            return new RegisterResult(null, null, "Error: already taken");
+            return new RegisterResponse(null, null, "Error: already taken");
         }
         else{
             String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
             userDAO.addUser(new UserData(userData.username(), hashedPassword, userData.email()));
             String authToken = generateAuthToken();
             authDAO.createAuth(authToken, new AuthData(authToken, userData.username()));
-            return new RegisterResult(userData.username(), authToken, null);
+            return new RegisterResponse(userData.username(), authToken, null);
         }
     }
 
@@ -80,7 +80,7 @@ public class ChessService {
         }
     }
 
-    public CreateGameResult createGame(CreateGameRequest createGameRequest) {
+    public CreateGameResponse createGame(CreateGameRequest createGameRequest) {
         AuthData authData = authDAO.getAuth(createGameRequest.authToken());
         if (authData != null){
             int gameID = generateGameID();
@@ -91,14 +91,14 @@ public class ChessService {
             } catch (DataAccessException e) {
                 throw new RuntimeException(e);
             }
-            return new CreateGameResult(gameID, null);
+            return new CreateGameResponse(gameID, null);
         }
         else{
-            return new CreateGameResult(null, "Error: unauthorized");
+            return new CreateGameResponse(null, "Error: unauthorized");
         }
     }
 
-    public ListGamesResult listGames(String authToken) {
+    public ListGamesResponse listGames(String authToken) {
         AuthData authData = authDAO.getAuth(authToken);
         if (authData != null){
             Collection<GameData> gamesList;
@@ -116,14 +116,14 @@ public class ChessService {
                 simpleGamesList.add(new SimpleGameData(gameID, whiteUsername, blackUsername, gameName));
             }
 
-            return new ListGamesResult(simpleGamesList, null);
+            return new ListGamesResponse(simpleGamesList, null);
         }
         else{
-            return new ListGamesResult(null, "Error: unauthorized");
+            return new ListGamesResponse(null, "Error: unauthorized");
         }
     }
 
-    public JoinGameResult joinGame(JoinGameRequest joinGameRequest) {
+    public JoinGameResponse joinGame(JoinGameRequest joinGameRequest) {
         AuthData authData = authDAO.getAuth(joinGameRequest.authToken());
         int gameID = joinGameRequest.gameID();
         if (authData != null) {
@@ -139,28 +139,28 @@ public class ChessService {
                         gameUpdate = new GameData(gameID, gameData.whiteUsername(), authData.username(),
                                 gameData.gameName(), gameData.game());
                         gameDAO.updateGame(gameID, gameUpdate);
-                        return new JoinGameResult(null);
+                        return new JoinGameResponse(null);
                     }
                     else if(gameData.whiteUsername() == null && playerColor == ChessGame.TeamColor.WHITE) {
                         GameData gameUpdate;
                         gameUpdate = new GameData(gameID, authData.username(), gameData.blackUsername(),
                                 gameData.gameName(), gameData.game());
                         gameDAO.updateGame(gameID, gameUpdate);
-                        return new JoinGameResult(null);
+                        return new JoinGameResponse(null);
                     }
                     else {
-                        return new JoinGameResult("Error: already taken");
+                        return new JoinGameResponse("Error: already taken");
                     }
                 }
                 else {
-                    return new JoinGameResult("Error: bad request");
+                    return new JoinGameResponse("Error: bad request");
                 }
             } catch (DataAccessException e) {
                 throw new RuntimeException(e);
             }
         }
         else {
-            return new JoinGameResult("Error: unauthorized");
+            return new JoinGameResponse("Error: unauthorized");
         }
     }
 
