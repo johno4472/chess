@@ -5,30 +5,33 @@ import model.UserData;
 import model.requestresult.*;
 
 public class ServerFacade {
+    private HTTPCommunicator httpCommunicator = new HTTPCommunicator();
+
+
 
     public RegisterResponse register(UserData userData) {
-        String json = HTTPCommunicator.post(null, new Gson().toJson(userData), "/user");
+        String json = httpCommunicator.post(null, new Gson().toJson(userData), "/user");
         return new Gson().fromJson(json, RegisterResponse.class);
     }
 
     public LoginResponse login(LoginRequest request) {
-        String json = HTTPCommunicator.post(null, new Gson().toJson(request), "/session");
+        String json = httpCommunicator.post(null, new Gson().toJson(request), "/session");
         return new Gson().fromJson(json, LoginResponse.class);
 
     }
 
     public CreateGameResponse createGame(CreateGameRequest request){
-        String json = HTTPCommunicator.post(request.authToken(), new Gson().toJson(request), "/game");
+        String json = httpCommunicator.post(request.authToken(), new Gson().toJson(request), "/game");
         return new Gson().fromJson(json, CreateGameResponse.class);
     }
 
     public ListGamesResponse listGames(ListGamesRequest request) {
-        String json = HTTPCommunicator.get(request.authToken(), "/game");
+        String json = httpCommunicator.get(request.authToken(), "/game");
         return new Gson().fromJson(json, ListGamesResponse.class);
     }
 
     public JoinGameResponse joinGame(JoinGameRequest request) {
-        String json = HTTPCommunicator.put(request.authToken(), new Gson().toJson(request), "/game");
+        String json = httpCommunicator.put(request.authToken(), new Gson().toJson(request), "/game");
         return new Gson().fromJson(json, JoinGameResponse.class);
     }
 
@@ -36,7 +39,7 @@ public class ServerFacade {
     }
 
     public LogoutResponse logout(String authToken) {
-        String json = HTTPCommunicator.delete(authToken, "/session");
+        String json = httpCommunicator.delete(authToken, "/session");
         return new Gson().fromJson(json, LogoutResponse.class);
     }
 }
