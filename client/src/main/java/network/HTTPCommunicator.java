@@ -7,10 +7,15 @@ import java.io.OutputStream;
 import java.net.*;
 
 public class HTTPCommunicator {
+    private static int port;
+
+    public HTTPCommunicator(int porty) {
+        port = porty;
+    }
 
     private HttpURLConnection getURLConnection(String urlPath){
         try {
-            URI uri = new URI("http://localhost:8080" + urlPath);
+            URI uri = new URI("http://localhost:" + port + urlPath);
             HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
             http.setReadTimeout(5000);
             http.setDoOutput(true);

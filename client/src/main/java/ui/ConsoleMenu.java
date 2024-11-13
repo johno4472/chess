@@ -21,7 +21,7 @@ public class ConsoleMenu {
     public ConsoleMenu() {
         System.out.println("Welcome to 240 Chess!!");
         loggedIn = false;
-        serverFacade = new ServerFacade();
+        serverFacade = new ServerFacade(8080);
         scanner = new Scanner(System.in);
         authToken = null;
 

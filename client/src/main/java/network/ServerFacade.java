@@ -9,8 +9,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class ServerFacade {
-    private HTTPCommunicator httpCommunicator = new HTTPCommunicator();
+    private HTTPCommunicator httpCommunicator;
+    private static int port;
 
+    public ServerFacade (int porty) {
+        port = porty;
+        httpCommunicator = new HTTPCommunicator(port);
+    }
+
+    public static int getPort() {
+        return port;
+    }
 
 
     public RegisterResponse register(UserData userData) {
