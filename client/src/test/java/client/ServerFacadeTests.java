@@ -1,20 +1,38 @@
 package client;
 
+import chess.ChessGame;
+import dataaccess.*;
+import model.UserData;
+import model.requestresult.*;
 import network.ServerFacade;
 import org.junit.jupiter.api.*;
 import server.Server;
+import service.ChessService;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
 
+    private static ServerFacade facade;
     private static Server server;
+    private AuthDAO authDAO = new MySQLAuthDAO();
+    private GameDAO gameDAO = new MySQLGameDAO();
+    private UserDAO userDAO = new MySQLUserDAO();
 
     @BeforeAll
     public static void init() {
         server = new Server();
-        var port = server.run(0);
+        var port = server.run(8080);
         System.out.println("Started test HTTP server on " + port);
-        ServerFacade facade = new ServerFacade();
+        facade = new ServerFacade();
+    }
+
+    @BeforeEach
+    public void clear(){
+        authDAO.clear();
+        gameDAO.clear();
+        userDAO.clear();
     }
 
     @AfterAll
@@ -25,8 +43,89 @@ public class ServerFacadeTests {
 
     @Test
     void register() throws Exception {
-        var authData = facade.register("player1", "password", "p1@email.com");
+        var authData = facade.register(new UserData("user", "password", "email"));
         assertTrue(authData.authToken().length() > 10);
+    }
+
+    @Test
+    void registerNegative() throws Exception {
+        assertTrue(false);
+    }
+
+    @Test
+    void login() throws Exception {
+        facade.register(new UserData("user", "password", "email"));
+        LoginResponse response = facade.login(new LoginRequest("user", "password"));
+        assertNotNull(response.username());
+    }
+
+    @Test
+    void loginNegative() throws Exception {
+        assertTrue(false);
+    }
+
+    @Test
+    void createGame() throws Exception {
+        RegisterResponse response = facade.register(new UserData("user", "password", "email"));
+        facade.createGame(new CreateGameRequest("game", response.authToken()));
+        assertNotNull(gameDAO.getGame(1));
+    }
+
+    @Test
+    void createGameNegative() throws Exception {
+        assertTrue(false);
+    }
+
+    @Test
+    void listGames() throws Exception {
+        RegisterResponse response = facade.register(new UserData("user", "password", "email"));
+        facade.createGame(new CreateGameRequest("game", response.authToken()));
+        facade.createGame(new CreateGameRequest("game2", response.authToken()));
+        facade.createGame(new CreateGameRequest("game3", response.authToken()));
+        ListGamesResponse listResponse = facade.listGames(new ListGamesRequest(response.authToken()));
+        assertEquals(listResponse.games().size(), 3);
+    }
+
+    @Test
+    void listGamesNegative() throws Exception {
+        RegisterResponse response = facade.register(new UserData("user", "password", "email"));
+        ListGamesResponse listResponse = facade.listGames(new ListGamesRequest(response.authToken()));
+        assertEquals(listResponse.games().size(), 0);
+    }
+
+    @Test
+    void joinGame() throws Exception {
+        RegisterResponse response = facade.register(new UserData("user", "password", "email"));
+        facade.createGame(new CreateGameRequest("game", response.authToken()));
+        facade.joinGame(new JoinGameRequest(ChessGame.TeamColor.WHITE, 1, response.authToken()));
+        assertEquals(gameDAO.getGame(1).whiteUsername(), "user");
+    }
+
+    @Test
+    void joinGameNegative() throws Exception {
+        assertTrue(false);
+    }
+
+    @Test
+    void observeGame() throws Exception {
+        assertTrue(false);
+    }
+
+    @Test
+    void observeGameNegative() throws Exception {
+        assertTrue(false);
+    }
+
+    @Test
+    void logout() throws Exception {
+        RegisterResponse response = facade.register(new UserData("user", "password", "email"));
+        facade.logout(response.authToken());
+        assertNull(authDAO.getAuth(response.authToken()));
+    }
+
+    @Test
+    void logoutNegative() throws Exception {
+        assertTrue(false);
     }
 
 }
