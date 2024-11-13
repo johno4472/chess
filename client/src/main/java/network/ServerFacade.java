@@ -48,10 +48,9 @@ public class ServerFacade {
         return new Gson().fromJson(new InputStreamReader(json), JoinGameResponse.class);
     }
 
-    public JoinGameResponse observeGame(int gameID, String authToken) {
-        InputStream json = httpCommunicator.put(authToken, new Gson().toJson(new JoinGameRequest
-                (ChessGame.TeamColor.WHITE, gameID, authToken)), "/game");
-        return new Gson().fromJson(new InputStreamReader(json), JoinGameResponse.class);
+    public ListGamesResponse observeGame(int gameID, String authToken) {
+        InputStream json = httpCommunicator.get(authToken, "/game");
+        return new Gson().fromJson(new InputStreamReader(json), ListGamesResponse.class);
     }
 
     public LogoutResponse logout(String authToken) {

@@ -118,15 +118,15 @@ public class ServerFacadeTests {
     void observeGame() throws Exception {
         RegisterResponse response = facade.register(new UserData("user", "password", "email"));
         facade.createGame(new CreateGameRequest("game", response.authToken()));
-        JoinGameResponse observe = facade.observeGame(1, response.authToken());
+        ListGamesResponse observe = facade.observeGame(1, response.authToken());
         assertNull(observe.message());
     }
 
     @Test
     void observeGameNegative() throws Exception {
         RegisterResponse response = facade.register(new UserData("user", "password", "email"));
-        JoinGameResponse observe = facade.observeGame(1, response.authToken());
-        assertNotNull(observe.message());
+        ListGamesResponse observe = facade.observeGame(1, response.authToken());
+        assertTrue(observe.games().isEmpty());
     }
 
     @Test

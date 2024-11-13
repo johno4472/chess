@@ -182,9 +182,9 @@ public class ConsoleMenu {
 
     private void observeGame() {
         System.out.println("Which game do you want to observe?");
-        String gameID = scanner.nextLine();
-        JoinGameResponse response = serverFacade.observeGame(Integer.parseInt(gameID), authToken);
-        if (response.message() == null) {
+        int gameID = Integer.parseInt(scanner.nextLine());
+        ListGamesResponse response = serverFacade.observeGame(gameID, authToken);
+        if (response.games().size() >= gameID) {
             BoardUI.main(new ChessGame().getBoard());
         }
         else {
