@@ -1,5 +1,6 @@
 package network;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.UserData;
 import model.requestresult.*;
@@ -38,7 +39,10 @@ public class ServerFacade {
         return new Gson().fromJson(new InputStreamReader(json), JoinGameResponse.class);
     }
 
-    public void observeGame(int gameID) {
+    public JoinGameResponse observeGame(int gameID, String authToken) {
+        InputStream json = httpCommunicator.put(authToken, new Gson().toJson(new JoinGameRequest
+                (ChessGame.TeamColor.WHITE, gameID, authToken)), "/game");
+        return new Gson().fromJson(new InputStreamReader(json), JoinGameResponse.class);
     }
 
     public LogoutResponse logout(String authToken) {

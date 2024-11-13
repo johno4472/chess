@@ -49,7 +49,9 @@ public class ServerFacadeTests {
 
     @Test
     void registerNegative() throws Exception {
-        assertTrue(false);
+        var authData = facade.register(new UserData("user", "password", "email"));
+        RegisterResponse response = facade.register(new UserData("user", "password", "email"));
+        assertNotNull(response.message());
     }
 
     @Test
@@ -61,7 +63,8 @@ public class ServerFacadeTests {
 
     @Test
     void loginNegative() throws Exception {
-        assertTrue(false);
+        LoginResponse response = facade.login(new LoginRequest("user", "password"));
+        assertNotNull(response.message());
     }
 
     @Test
@@ -73,7 +76,10 @@ public class ServerFacadeTests {
 
     @Test
     void createGameNegative() throws Exception {
-        assertTrue(false);
+        RegisterResponse response = facade.register(new UserData("user", "password", "email"));
+        facade.createGame(new CreateGameRequest("game", response.authToken()));
+        facade.createGame(new CreateGameRequest("game", response.authToken()));
+        assertEquals(gameDAO.listGames().size(), 2);
     }
 
     @Test
@@ -103,17 +109,24 @@ public class ServerFacadeTests {
 
     @Test
     void joinGameNegative() throws Exception {
-        assertTrue(false);
+        RegisterResponse response = facade.register(new UserData("user", "password", "email"));
+        JoinGameResponse joinResponse = facade.joinGame(new JoinGameRequest(ChessGame.TeamColor.WHITE, 1, response.authToken()));
+        assertNotNull(joinResponse.message());
     }
 
     @Test
     void observeGame() throws Exception {
-        assertTrue(false);
+        RegisterResponse response = facade.register(new UserData("user", "password", "email"));
+        facade.createGame(new CreateGameRequest("game", response.authToken()));
+        JoinGameResponse observe = facade.observeGame(1, response.authToken());
+        assertNull(observe.message());
     }
 
     @Test
     void observeGameNegative() throws Exception {
-        assertTrue(false);
+        RegisterResponse response = facade.register(new UserData("user", "password", "email"));
+        JoinGameResponse observe = facade.observeGame(1, response.authToken());
+        assertNotNull(observe.message());
     }
 
     @Test
@@ -125,7 +138,7 @@ public class ServerFacadeTests {
 
     @Test
     void logoutNegative() throws Exception {
-        assertTrue(false);
+        facade.logout("a");
     }
 
 }

@@ -183,8 +183,13 @@ public class ConsoleMenu {
     private void observeGame() {
         System.out.println("Which game do you want to observe?");
         String gameID = scanner.nextLine();
-        serverFacade.observeGame(Integer.parseInt(gameID));
-        BoardUI.main(new ChessGame().getBoard());
+        JoinGameResponse response = serverFacade.observeGame(Integer.parseInt(gameID), authToken);
+        if (response.message() == null) {
+            BoardUI.main(new ChessGame().getBoard());
+        }
+        else {
+            System.out.println("Looks like there was a mistake. Double check your entries.");
+        }
     }
 
     private void logout() {
@@ -195,10 +200,6 @@ public class ConsoleMenu {
 
     private void help() {
         System.out.println("Help yourself! I've got enough to figure out here");
-    }
-
-    public String getAuth() {
-        return authToken;
     }
 
 }
