@@ -24,7 +24,7 @@ public class BoardUI {
     private static String squareColor = "White";
     private static ChessBoard board;
 
-    private static final String [] COLUMNS_IN_ORDER = {"a", "b", "c", "d", "e", "f", "g", "h"};
+    private static final String [] COLUMNS_IN_ORDER = {"h", "g", "f", "e", "d", "c", "b", "a"};
 
 
     public static void main(ChessBoard chessBoard) {
@@ -38,8 +38,28 @@ public class BoardUI {
 
         drawTopOrBottom(out);
 
-        out.print(SET_BG_COLOR_BLACK);
+        drawSolidLine(out);
+
+        whiteView = -1;
+
+        drawTopOrBottom(out);
+
+        drawChessBoard(out);
+
+        drawTopOrBottom(out);
+
+        out.print(SET_BG_COLOR_DARK_GREY);
         out.print(SET_TEXT_COLOR_WHITE);
+    }
+
+    private static void drawSolidLine(PrintStream out) {
+        setMagenta(out);
+        for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
+            out.print(EMPTY);
+        }
+        setDarkGrey(out);
+        out.println();
+
     }
 
     private static void drawTopOrBottom(PrintStream out) {
@@ -48,10 +68,16 @@ public class BoardUI {
 
         out.print(EMPTY.repeat(LINE_WIDTH_IN_PADDED_CHARS));
 
-        for (int boardCol = 0; boardCol < COLUMNS_IN_ORDER.length; ++boardCol) {
-            printHeaderText(out, " " + COLUMNS_IN_ORDER[boardCol] + " ");
+        if (whiteView == 1) {
+            for (int boardCol = 0; boardCol < COLUMNS_IN_ORDER.length; ++boardCol) {
+                printHeaderText(out, " " + COLUMNS_IN_ORDER[boardCol] + " ");
+            }
         }
-
+        else {
+            for (int boardCol = COLUMNS_IN_ORDER.length - 1; boardCol >= 0; --boardCol) {
+                printHeaderText(out, " " + COLUMNS_IN_ORDER[boardCol] + " ");
+            }
+        }
         out.print(EMPTY.repeat(LINE_WIDTH_IN_PADDED_CHARS));
 
         setDarkGrey(out);
@@ -70,31 +96,50 @@ public class BoardUI {
 
     private static void drawChessBoard(PrintStream out) {
 
-        for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES - 2; ++boardRow) {
+        if (whiteView == 1){
+            for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES - 2; ++boardRow) {
 
-            drawRowOfSquares(out, boardRow);
-            colorCount += 1;
+                drawRowOfSquares(out, boardRow);
+                colorCount += 1;
+            }
+        }
+        else {
+            for (int boardRow = BOARD_SIZE_IN_SQUARES - 1; boardRow > 1; --boardRow) {
+
+                drawRowOfSquares(out, boardRow);
+                colorCount += 1;
+            }
         }
     }
 
     private static void drawRowOfSquares(PrintStream out, int boardRow) {
 
-        printRowHeader(out, boardRow + 1);
+        printRowHeader(out, boardRow + whiteView);
 
-        for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_PADDED_CHARS; ++squareRow) {
+        if (whiteView == 1){
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES - 2; ++boardCol) {
                 setBoxColor(out);
-                printPlayer(out, board.getPiece(new ChessPosition(boardRow + 1, boardCol + 1)));
+                printPlayer(out, board.getPiece(new ChessPosition(boardRow + whiteView, boardCol + whiteView)));
 
                 setDarkGrey(out);
             }
-
-            printRowHeader(out, boardRow + 1);
-            row += 1;
-            setDarkGrey(out);
-
-            out.println();
         }
+        else {
+            for (int boardCol = BOARD_SIZE_IN_SQUARES - 2; boardCol > 0; --boardCol) {
+                setBoxColor(out);
+                printPlayer(out, board.getPiece(new ChessPosition(boardRow + whiteView, boardCol)));
+
+                setDarkGrey(out);
+            }
+        }
+
+
+        printRowHeader(out, boardRow + whiteView);
+        row += 1;
+        setDarkGrey(out);
+
+        out.println();
+
     }
 
     private static void setBoxColor(PrintStream out) {
