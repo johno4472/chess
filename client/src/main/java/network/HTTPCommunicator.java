@@ -33,8 +33,14 @@ public class HTTPCommunicator {
             //send
             http.connect();
 
-            //get and return json response
-            return http.getInputStream();
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
+                //get and return json response
+                return http.getInputStream();
+            }
+            else {
+                return http.getErrorStream();
+            }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -58,8 +64,14 @@ public class HTTPCommunicator {
             //send
             http.connect();
 
-            //get and return json response
-            return http.getInputStream();
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
+                //get and return json response
+                return http.getInputStream();
+            }
+            else {
+                return http.getErrorStream();
+            }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -78,9 +90,14 @@ public class HTTPCommunicator {
             //send
             http.connect();
 
-            //get and return json response
-            return http.getInputStream();
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
+                //get and return json response
+                return http.getInputStream();
+            }
+            else {
+                return http.getErrorStream();
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -105,8 +122,14 @@ public class HTTPCommunicator {
             //send
             http.connect();
 
-            //get and return json response
-            return http.getInputStream();
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
+                //get and return json response
+                return http.getInputStream();
+            }
+            else {
+                return http.getErrorStream();
+            }
 
         } catch (IOException e) {
             throw new RuntimeException(e);

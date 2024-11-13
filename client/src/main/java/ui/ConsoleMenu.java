@@ -97,9 +97,14 @@ public class ConsoleMenu {
         String email = scanner.nextLine();
 
         RegisterResponse response = serverFacade.register(new UserData(username, password, email));
-        System.out.println("Registered. Welcome " + response.username() + "!\n");
-        authToken = response.authToken();
-        loggedIn = true;
+        if (response.message() == null) {
+            System.out.println("Registered. Welcome " + response.username() + "!\n");
+            authToken = response.authToken();
+            loggedIn = true;
+        }
+        else {
+            System.out.println("It looks like something went wrong. That username is probably already taken.");
+        }
     }
 
     private void login() {
@@ -109,9 +114,14 @@ public class ConsoleMenu {
         String password = scanner.nextLine();
 
         LoginResponse response = serverFacade.login(new LoginRequest(username, password));
-        authToken = response.authToken();
-        System.out.println("Logged in. Welcome " + username + "!\n");
-        loggedIn = true;
+        if (response.message() == null) {
+            authToken = response.authToken();
+            System.out.println("Logged in. Welcome " + username + "!\n");
+            loggedIn = true;
+        }
+        else {
+            System.out.println("Looks like either your username or password are incorrect.");
+        }
     }
 
     private void createGame(){
@@ -119,12 +129,20 @@ public class ConsoleMenu {
         String gameName = scanner.nextLine();
 
         CreateGameResponse response = serverFacade.createGame(new CreateGameRequest(gameName, authToken));
-        System.out.println("Game created. Game ID is: " + response.gameID());
+        if (response.message() == null) {
+            System.out.println("Game created. Game ID is: " + response.gameID());
+        }
+        else {
+            System.out.println("Something went wrong. It was probably an invalid ID.");
+        }
     }
 
     private void listGames() {
         ListGamesResponse response = serverFacade.listGames(new ListGamesRequest(authToken));
         Collection<SimpleGameData> games = response.games();
+        if (games.isEmpty()){
+            System.out.println("There are no games to list.");
+        }
         for (SimpleGameData game: games){
             System.out.println("Game ID: " + game.gameID() + ",  White Username: " + game.whiteUsername() +
                     ",  Black Username: " + game.blackUsername() + ",  Game Name: " + game.gameName() + ";");
@@ -152,7 +170,13 @@ public class ConsoleMenu {
         }
         JoinGameResponse response = serverFacade.joinGame(new JoinGameRequest(
                 color, Integer.parseInt(gameID), authToken));
-        BoardUI.main(new ChessGame().getBoard());
+        if (response.message() == null) {
+            BoardUI.main(new ChessGame().getBoard());
+        }
+        else {
+            System.out.println("Something went wrong. You could have put in an invalid ID or chosen/written an incorrect color entry");
+        }
+
 
     }
 
@@ -160,6 +184,7 @@ public class ConsoleMenu {
         System.out.println("Which game do you want to observe?");
         String gameID = scanner.nextLine();
         serverFacade.observeGame(Integer.parseInt(gameID));
+        BoardUI.main(new ChessGame().getBoard());
     }
 
     private void logout() {
