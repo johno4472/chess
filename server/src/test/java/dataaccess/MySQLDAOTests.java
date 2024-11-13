@@ -6,8 +6,8 @@ import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.ChessService;
-import service.requestresult.CreateGameRequest;
-import service.requestresult.RegisterResult;
+import model.requestresult.CreateGameRequest;
+import model.requestresult.RegisterResponse;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -111,7 +111,7 @@ public class MySQLDAOTests {
 
     @Test
     public void clearGame() {
-        RegisterResult result = service.addUser(new UserData("test", "test", "test"));
+        RegisterResponse result = service.addUser(new UserData("test", "test", "test"));
         String auth = result.authToken();
         service.createGame(new CreateGameRequest("game", auth));
         gameDAO.clear();
@@ -125,7 +125,7 @@ public class MySQLDAOTests {
 
     @Test
     public void createGamePositive() {
-        RegisterResult result = service.addUser(new UserData("test", "test", "test"));
+        RegisterResponse result = service.addUser(new UserData("test", "test", "test"));
         String auth = result.authToken();
         service.createGame(new CreateGameRequest("game", auth));
         try {
@@ -137,7 +137,7 @@ public class MySQLDAOTests {
 
     @Test
     public void createGameNegative() {
-        RegisterResult result = service.addUser(new UserData("test", "test", "test"));
+        RegisterResponse result = service.addUser(new UserData("test", "test", "test"));
         String auth = result.authToken();
         service.createGame(new CreateGameRequest("game", auth));
         service.createGame(new CreateGameRequest("game", auth));
@@ -150,7 +150,7 @@ public class MySQLDAOTests {
 
     @Test
     public void getGamePositive() throws DataAccessException {
-        RegisterResult result = service.addUser(new UserData("test", "test", "test"));
+        RegisterResponse result = service.addUser(new UserData("test", "test", "test"));
         String auth = result.authToken();
         service.createGame(new CreateGameRequest("game", auth));
         assertEquals("game", gameDAO.getGame(1).gameName());
@@ -164,7 +164,7 @@ public class MySQLDAOTests {
 
     @Test
     public void updateGamePositive() throws DataAccessException {
-        RegisterResult result = service.addUser(new UserData("test", "test", "test"));
+        RegisterResponse result = service.addUser(new UserData("test", "test", "test"));
         String auth = result.authToken();
         service.createGame(new CreateGameRequest("game", auth));
         ChessGame game = gameDAO.getGame(1).game();
@@ -174,7 +174,7 @@ public class MySQLDAOTests {
 
     @Test
     public void updateGameNegative() throws DataAccessException {
-        RegisterResult result = service.addUser(new UserData("test", "test", "test"));
+        RegisterResponse result = service.addUser(new UserData("test", "test", "test"));
         String auth = result.authToken();
         service.createGame(new CreateGameRequest("game", auth));
         ChessGame game = gameDAO.getGame(1).game();
@@ -184,7 +184,7 @@ public class MySQLDAOTests {
 
     @Test
     public void listGamesPositive() throws DataAccessException {
-        RegisterResult result = service.addUser(new UserData("test", "test", "test"));
+        RegisterResponse result = service.addUser(new UserData("test", "test", "test"));
         String auth = result.authToken();
         service.createGame(new CreateGameRequest("game", auth));
         service.createGame(new CreateGameRequest("game", auth));
