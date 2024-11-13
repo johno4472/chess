@@ -37,7 +37,7 @@ public class ConsoleMenu {
             }
             System.out.println("What would you like to do? (Select the number of the option you prefer)");
             if (loggedIn){
-                System.out.println("1. Create Game\n2. List Games\n3. Join Game\n4. Observe Game\n5. Logout\n6. Quit\n7. Help");
+                System.out.println("1. Create Game\n2. List Games\n3. Join Game\n4. Observe Game\n5. Logout\n6. Help");
 
                 String choice = scanner.nextLine();
                 switch (choice){
@@ -58,9 +58,6 @@ public class ConsoleMenu {
                         logout();
                         break;
                     case "6":
-                        quit = true;
-                        break;
-                    case "7":
                         help();
                         break;
                 }
@@ -140,11 +137,13 @@ public class ConsoleMenu {
     private void listGames() {
         ListGamesResponse response = serverFacade.listGames(new ListGamesRequest(authToken));
         Collection<SimpleGameData> games = response.games();
+        int userGameID = 0;
         if (games.isEmpty()){
             System.out.println("There are no games to list.");
         }
         for (SimpleGameData game: games){
-            System.out.println("Game ID: " + game.gameID() + ",  White Username: " + game.whiteUsername() +
+            userGameID += 1;
+            System.out.println("Game ID: " + userGameID + ",  White Username: " + game.whiteUsername() +
                     ",  Black Username: " + game.blackUsername() + ",  Game Name: " + game.gameName() + ";");
         }
         System.out.println();
@@ -152,26 +151,34 @@ public class ConsoleMenu {
 
     private void joinGame() {
         System.out.println("Enter the ID number of the game you'd like to join.");
-        String gameID = scanner.nextLine();
+        int userGameID = 0;
+        try {
+            userGameID = Integer.parseInt(scanner.nextLine());
+        } catch (Exception e){
+            System.out.println("Type a number please");
+            return;
+        }
+        int dataGameID = convertToDataGameID(userGameID);
         System.out.println("Would you like to be: white/black?");
         String colorChoice = scanner.nextLine();
         ChessGame.TeamColor color = ChessGame.TeamColor.WHITE;
         Boolean colorRepeat = true;
         while (colorRepeat) {
-            if (colorChoice.equals("white")) {
+            if (colorChoice.equalsIgnoreCase("white")) {
                 color = ChessGame.TeamColor.WHITE;
                 colorRepeat = false;
-            } else if (colorChoice.equals("black")) {
+            } else if (colorChoice.equalsIgnoreCase("black")) {
                 color = ChessGame.TeamColor.BLACK;
                 colorRepeat = false;
             } else {
                 System.out.println("Invalid entry. Please enter one of the two options as shown.");
+                colorChoice = scanner.nextLine();
             }
         }
         JoinGameResponse response = serverFacade.joinGame(new JoinGameRequest(
-                color, Integer.parseInt(gameID), authToken));
+                color, dataGameID, authToken));
         if (response.message() == null) {
-            BoardUI.main(new ChessGame().getBoard());
+            BoardUI.main(new ChessGame().getBoard(), color);
         }
         else {
             System.out.println("Something went wrong. You could have put in an invalid ID or chosen/written an incorrect color entry");
@@ -185,11 +192,23 @@ public class ConsoleMenu {
         int gameID = Integer.parseInt(scanner.nextLine());
         ListGamesResponse response = serverFacade.observeGame(gameID, authToken);
         if (response.games().size() >= gameID) {
-            BoardUI.main(new ChessGame().getBoard());
+            BoardUI.main(new ChessGame().getBoard(), ChessGame.TeamColor.WHITE);
         }
         else {
             System.out.println("Looks like there was a mistake. Double check your entries.");
         }
+    }
+
+    private int convertToDataGameID(int userGameID) {
+        ListGamesResponse response = serverFacade.listGames(new ListGamesRequest(authToken));
+        int counter = 0;
+        for (SimpleGameData game : response.games()) {
+            counter += 1;
+            if (counter == userGameID){
+                return game.gameID();
+            }
+        }
+        return 0;
     }
 
     private void logout() {

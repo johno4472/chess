@@ -23,13 +23,19 @@ public class BoardUI {
     private static int colorCount = 0;
     private static String squareColor = "White";
     private static ChessBoard board;
+    private static ChessGame.TeamColor color = ChessGame.TeamColor.WHITE;
 
     private static final String [] COLUMNS_IN_ORDER = {"h", "g", "f", "e", "d", "c", "b", "a"};
 
 
-    public static void main(ChessBoard chessBoard) {
+    public static void main(ChessBoard chessBoard, ChessGame.TeamColor userColor) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         board = chessBoard;
+        color = userColor;
+
+        if (color.equals(ChessGame.TeamColor.BLACK)){
+            whiteView = -1;
+        }
         out.print(ERASE_SCREEN);
 
         drawTopOrBottom(out);
@@ -40,7 +46,13 @@ public class BoardUI {
 
         drawSolidLine(out);
 
-        whiteView = -1;
+        if (color.equals(ChessGame.TeamColor.BLACK)) {
+            whiteView = 1;
+        }
+        else {
+            whiteView = -1;
+        }
+
 
         drawTopOrBottom(out);
 
@@ -119,18 +131,18 @@ public class BoardUI {
         if (whiteView == 1){
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES - 2; ++boardCol) {
                 setBoxColor(out);
-                printPlayer(out, board.getPiece(new ChessPosition(boardRow + whiteView, boardCol + whiteView)));
-
-                setDarkGrey(out);
+                printPlayer(out, board.getPiece(new ChessPosition(boardRow + whiteView, BOARD_SIZE_IN_SQUARES - 1 -
+                        (boardCol + whiteView))));
             }
         }
         else {
             for (int boardCol = BOARD_SIZE_IN_SQUARES - 2; boardCol > 0; --boardCol) {
                 setBoxColor(out);
-                printPlayer(out, board.getPiece(new ChessPosition(boardRow + whiteView, boardCol)));
+                printPlayer(out, board.getPiece(new ChessPosition(boardRow + whiteView, BOARD_SIZE_IN_SQUARES - 1 -
+                        boardCol)));
 
-                setDarkGrey(out);
             }
+            setDarkGrey(out);
         }
 
 
@@ -145,10 +157,10 @@ public class BoardUI {
     private static void setBoxColor(PrintStream out) {
         colorCount %= 2;
         if (colorCount == 0) {
-            out.print(SET_BG_COLOR_LIGHT_GREY);
+            out.print(SET_BG_COLOR_BLUE);
         }
         else {
-            out.print(SET_BG_COLOR_BLUE);
+            out.print(SET_BG_COLOR_LIGHT_GREY);
         }
         colorCount += 1;
     }
