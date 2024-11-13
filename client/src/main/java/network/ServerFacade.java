@@ -13,19 +13,19 @@ public class ServerFacade {
 
 
     public RegisterResponse register(UserData userData) {
-        InputStreamReader json = httpCommunicator.post(null, new Gson().toJson(userData), "/user");
-        return new Gson().fromJson(json, RegisterResponse.class);
+        InputStream json = httpCommunicator.post(null, new Gson().toJson(userData), "/user");
+        return new Gson().fromJson(new InputStreamReader(json), RegisterResponse.class);
     }
 
     public LoginResponse login(LoginRequest request) {
-        InputStreamReader json = httpCommunicator.post(null, new Gson().toJson(request), "/session");
-        return new Gson().fromJson(json, LoginResponse.class);
+        InputStream json = httpCommunicator.post(null, new Gson().toJson(request), "/session");
+        return new Gson().fromJson(new InputStreamReader(json), LoginResponse.class);
 
     }
 
     public CreateGameResponse createGame(CreateGameRequest request){
-        InputStreamReader json = httpCommunicator.post(request.authToken(), new Gson().toJson(request), "/game");
-        return new Gson().fromJson(json, CreateGameResponse.class);
+        InputStream json = httpCommunicator.post(request.authToken(), new Gson().toJson(request), "/game");
+        return new Gson().fromJson(new InputStreamReader(json), CreateGameResponse.class);
     }
 
     public ListGamesResponse listGames(ListGamesRequest request) {

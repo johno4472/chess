@@ -89,14 +89,16 @@ public class HTTPCommunicator {
         }
     }
 
-    public InputStreamReader post(String authToken, String jsonBody, String urlPath) {
+    public InputStream post(String authToken, String jsonBody, String urlPath) {
         //create url
         HttpURLConnection http = getURLConnection(urlPath);
         try {
             http.setRequestMethod("POST");
 
             //create header
-            http.addRequestProperty("authorization", authToken);
+            if (authToken != null){
+                http.addRequestProperty("authorization", authToken);
+            }
 
             //create body
             try (OutputStream reqBody = http.getOutputStream();){
@@ -107,9 +109,8 @@ public class HTTPCommunicator {
             http.connect();
 
             //get and return json response
-            try (InputStream respBody = http.getInputStream()){
-                return new InputStreamReader(respBody);
-            }
+            return http.getInputStream();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
