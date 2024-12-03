@@ -17,6 +17,7 @@ public class ConsoleMenu {
     Scanner scanner;
     Boolean quit = false;
     private boolean inGame;
+    private ChessGame.TeamColor inGameColor;
 
 
     public ConsoleMenu() {
@@ -26,6 +27,7 @@ public class ConsoleMenu {
         scanner = new Scanner(System.in);
         authToken = null;
         inGame = false;
+        inGameColor = ChessGame.TeamColor.WHITE;
 
         runConsole();
     }
@@ -40,15 +42,15 @@ public class ConsoleMenu {
             System.out.println("What would you like to do? (Select the number of the option you prefer)");
             if (loggedIn){
                 if (inGame){
-                    System.out.println("1. Help\n2. Redraw Chessboard\n3. Leave\n4. Make Move\n5. Resign\nHighlight Legal Moves");
+                    System.out.println("1. Help\n2. Redraw Chessboard\n3. Leave\n4. Make Move\n5. Resign\n6. Highlight Legal Moves");
 
                     String choice = scanner.nextLine();
                     switch (choice){
                         case "1":
-                            helpInGame();
+                            help();
                             break;
                         case "2":
-                            printBoard();
+                            printBoard(inGameColor);
                             break;
                         case "3":
                             leave();
@@ -112,6 +114,26 @@ public class ConsoleMenu {
             }
         }
         System.out.println("'til we meet again!");
+    }
+
+    private void printBoard(ChessGame.TeamColor color) {
+        BoardUI.main(new ChessGame().getBoard(), color);
+    }
+
+    private void leave() {
+
+    }
+
+    private void makeMove(){
+
+    }
+
+    private void resign(){
+
+    }
+
+    private void highlightLegalMoves(){
+
     }
 
     private void register() {
@@ -198,6 +220,7 @@ public class ConsoleMenu {
                 colorRepeat = false;
             } else if (colorChoice.equalsIgnoreCase("black")) {
                 color = ChessGame.TeamColor.BLACK;
+                inGameColor = ChessGame.TeamColor.BLACK;
                 colorRepeat = false;
             } else {
                 System.out.println("Invalid entry. Please enter one of the two options as shown.");
@@ -207,7 +230,7 @@ public class ConsoleMenu {
         JoinGameResponse response = serverFacade.joinGame(new JoinGameRequest(
                 color, dataGameID, authToken));
         if (response.message() == null) {
-            BoardUI.main(new ChessGame().getBoard(), color);
+            printBoard(color);
             inGame = true;
         }
         else {
@@ -248,7 +271,17 @@ public class ConsoleMenu {
     }
 
     private void help() {
-        System.out.println("Help yourself! I've got enough to figure out here");
+        if (loggedIn) {
+            if (inGame) {
+                System.out.println("Just let me know what you want to do for gameplay!" +
+                        " Select the number corresponding with your choice");
+            } else {
+                System.out.println("Just let me know what you want to do now that you're logged in!" +
+                        " Select the number corresponding with your choice");
+            }
+        } else {
+            System.out.println("Just let me know what you want to do! If you haven't created an account yet, go ahead and register." +
+                    "Select the number corresponding with your choice");
+        }
     }
-
 }
