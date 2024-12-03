@@ -41,6 +41,28 @@ public class ConsoleMenu {
             if (loggedIn){
                 if (inGame){
                     System.out.println("1. Help\n2. Redraw Chessboard\n3. Leave\n4. Make Move\n5. Resign\nHighlight Legal Moves");
+
+                    String choice = scanner.nextLine();
+                    switch (choice){
+                        case "1":
+                            helpInGame();
+                            break;
+                        case "2":
+                            printBoard();
+                            break;
+                        case "3":
+                            leave();
+                            break;
+                        case "4":
+                            makeMove();
+                            break;
+                        case "5":
+                            resign();
+                            break;
+                        case "6":
+                            highlightLegalMoves();
+                            break;
+                    }
                 }
                 else {
                     System.out.println("1. Create Game\n2. List Games\n3. Join Game\n4. Observe Game\n5. Logout\n6. Help");
@@ -186,6 +208,7 @@ public class ConsoleMenu {
                 color, dataGameID, authToken));
         if (response.message() == null) {
             BoardUI.main(new ChessGame().getBoard(), color);
+            inGame = true;
         }
         else {
             System.out.println("Something went wrong. You could have put in an invalid ID or chosen/written an incorrect color entry");
