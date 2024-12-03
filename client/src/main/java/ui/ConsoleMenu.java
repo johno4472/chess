@@ -16,6 +16,7 @@ public class ConsoleMenu {
     String authToken;
     Scanner scanner;
     Boolean quit = false;
+    private boolean inGame;
 
 
     public ConsoleMenu() {
@@ -24,6 +25,7 @@ public class ConsoleMenu {
         serverFacade = new ServerFacade(8080);
         scanner = new Scanner(System.in);
         authToken = null;
+        inGame = false;
 
         runConsole();
     }
@@ -37,29 +39,34 @@ public class ConsoleMenu {
             }
             System.out.println("What would you like to do? (Select the number of the option you prefer)");
             if (loggedIn){
-                System.out.println("1. Create Game\n2. List Games\n3. Join Game\n4. Observe Game\n5. Logout\n6. Help");
+                if (inGame){
+                    System.out.println("1. Help\n2. Redraw Chessboard\n3. Leave\n4. Make Move\n5. Resign\nHighlight Legal Moves");
+                }
+                else {
+                    System.out.println("1. Create Game\n2. List Games\n3. Join Game\n4. Observe Game\n5. Logout\n6. Help");
 
-                String choice = scanner.nextLine();
-                switch (choice){
-                    case "1":
-                        createGame();
-                        break;
-                    case "2":
-                        listGames();
-                        break;
-                    case "3":
-                        joinGame();
-                        //BoardUI.buildBoard();
-                        break;
-                    case "4":
-                        observeGame();
-                        break;
-                    case "5":
-                        logout();
-                        break;
-                    case "6":
-                        help();
-                        break;
+                    String choice = scanner.nextLine();
+                    switch (choice){
+                        case "1":
+                            createGame();
+                            break;
+                        case "2":
+                            listGames();
+                            break;
+                        case "3":
+                            joinGame();
+                            //BoardUI.buildBoard();
+                            break;
+                        case "4":
+                            observeGame();
+                            break;
+                        case "5":
+                            logout();
+                            break;
+                        case "6":
+                            help();
+                            break;
+                    }
                 }
             }
             else {
