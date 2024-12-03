@@ -1,0 +1,45 @@
+Join Game
+- HTTP join (not for observer)
+- Open websocket connection (/ws endpoint)
+-Send CONNECT message to server
+- Gameplay UI
+
+Gameplay UI
+- Help
+	- Give help instructions
+- Redraw Chessboard
+	- Call LOAD_BOARD again
+- Leave
+	- Game updated to remove user
+	- Server send notification to all clients
+- Make Move
+	- Server verifies validity of move
+	- game updated to reflect new board
+	- Server calls LOAD_GAME for all clients
+	- Server sends notification to all other clients
+	- If in Check or checkmate, server sends notification to all other clients
+- Resign
+	- Server ends game
+	- Server sends notification to all clients
+- Highlight legal moves (done by server)
+	- For each move in valid move for that piece, change color or squares
+
+Notifications
+- User connects as player -> name + color
+- User connects as observer -> name
+- Player made move -> update board, name, move
+- Player resigned -> name
+- Player in check -> name (checked by server)
+- Checkmate - name (checked by server)
+
+
+Messages (both Java classes like request and response serializing to/from java
+- UserGameCommands 
+	- CONNECT
+	- MAKE_MOVE (subclass to implement ChessMove)
+	- LEAVE
+	- RESIGN
+- ServerMessages (3 separate subclasses)
+	- LOAD_GAME (use gamestate to draw Chessboard)
+	- ERROR (Send Error message for invalid move (only sent to root client)
+	- NOTIFICATION (for other players' actions)
