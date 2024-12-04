@@ -19,15 +19,19 @@ public class ConnectionManager {
         connections.remove(visitorName);
     }
 
-    public void broadcast(String authToken, ServerMessage serverMessage) throws IOException {
+    public void broadcast(String username, int gameID, ServerMessage serverMessage) throws IOException {
         var removeList = new ArrayList<Connection>();
-        String username = "Test";
         int size = connections.size();
         System.out.println("connections size -> " + size);
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (username.equals("Test")) {
-                    c.send(serverMessage.toString());
+                if (!c.username.equals(username)) {
+                    if (c.gameID == gameID){
+                        c.send(serverMessage.toString());
+                    }
+                }
+                else {
+                    c.send(serverMessage.makePersonal().toString());
                 }
             } else {
                 removeList.add(c);

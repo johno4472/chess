@@ -1,11 +1,9 @@
 package server.websocket;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import com.google.gson.Gson;
-import dataaccess.UserDAO;
-import dataaccess.GameDAO;
-import dataaccess.AuthDAO;
-import dataaccess.MySQLAuthDAO;
+import dataaccess.*;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -22,10 +20,15 @@ public class WebSocketHandler {
     private static final ConnectionManager connections = new ConnectionManager();
     private String username;
     private AuthDAO authDAO;
+    private GameDAO gameDAO;
+    private int gameID;
+    private ChessGame.TeamColor color;
+    private String textColor;
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
         this.authDAO = new MySQLAuthDAO();
+        this.gameDAO = new MySQLGameDAO();
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getAuthToken(), command.getGameID(), session);
@@ -36,11 +39,27 @@ public class WebSocketHandler {
     }
 
     private void connect(String authToken, int gameID, Session session) throws IOException {
-        connections.add(authToken, new SessionInfo(gameID, session));
+        this.gameID = gameID;
         username = authDAO.getAuth(authToken).username();
+        try{
+            String white = gameDAO.getGame(gameID).whiteUsername();
+            String black = gameDAO.getGame(gameID).blackUsername();
+            if (black != null && black.equals(username)){
+                color = ChessGame.TeamColor.BLACK;
+                textColor = "black";
+            }
+            else if (white != null && white.equals(username)){
+                color = ChessGame.TeamColor.WHITE;
+                textColor = "white";
+            }
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        connections.add(authToken, new SessionInfo(gameID, session, username));
         var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
-                username + " has joined game #" + gameID + "!", new ChessBoard());
-        connections.broadcast(authToken, serverMessage);
+                username + " has joined game #" + gameID + " as " + textColor + "!", new ChessBoard(),
+                "You have joined game #" + gameID + " as " + textColor + "!");
+        connections.broadcast(username, gameID, serverMessage);
     }
 
     private void makeMove(String authToken, Session session){
@@ -49,22 +68,12 @@ public class WebSocketHandler {
 
     private void leave(String authToken, Session session) throws IOException {
         connections.remove("visitorName");
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "This person left the game",
-                new ChessBoard());
-        connections.broadcast("authToken", notification);
+        var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username + " left the game",
+                new ChessBoard(), "You have left the game");
+        connections.broadcast(username, gameID, serverMessage);
     }
 
     private void resign(String authToken, Session session){
 
-    }
-
-    public void makeNoise(String petName, String sound) throws Exception {
-        try {
-            var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "This guy's making noise",
-                    new ChessBoard());
-            connections.broadcast("authToken", serverMessage);
-        } catch (Exception ex) {
-            throw new Exception();
-        }
     }
 }

@@ -15,6 +15,7 @@ public class ServerMessage {
     ServerMessageType serverMessageType;
     String messageBody;
     ChessBoard chessBoard;
+    String personalMessage;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -22,10 +23,12 @@ public class ServerMessage {
         NOTIFICATION
     }
 
-    public ServerMessage(ServerMessageType type, String messageBody, ChessBoard chessBoard) {
+    public ServerMessage(ServerMessageType type, String messageBody, ChessBoard chessBoard, String personalMessage) {
         this.messageBody = messageBody;
         this.serverMessageType = type;
         this.chessBoard = chessBoard;
+        this.personalMessage = personalMessage;
+
     }
 
     public ServerMessageType getServerMessageType() {
@@ -42,6 +45,10 @@ public class ServerMessage {
 
     public ChessBoard getChessBoard() {
         return chessBoard;
+    }
+
+    public ServerMessage makePersonal() {
+        return new ServerMessage(this.getServerMessageType(), this.personalMessage, this.chessBoard, this.messageBody);
     }
 
     @Override
