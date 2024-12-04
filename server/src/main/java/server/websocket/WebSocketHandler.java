@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import dataaccess.UserDAO;
 import dataaccess.GameDAO;
 import dataaccess.AuthDAO;
+import dataaccess.MySQLAuthDAO;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -19,9 +20,12 @@ import java.util.Timer;
 public class WebSocketHandler {
 
     private static final ConnectionManager connections = new ConnectionManager();
+    private String username;
+    private AuthDAO authDAO;
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
+        this.authDAO = new MySQLAuthDAO();
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getAuthToken(), command.getGameID(), session);
@@ -32,9 +36,10 @@ public class WebSocketHandler {
     }
 
     private void connect(String authToken, int gameID, Session session) throws IOException {
-        connections.add(authToken, new SessionInfo(gameID, (org.glassfish.grizzly.http.server.Session) session));
+        connections.add(authToken, new SessionInfo(gameID, session));
+        username = authDAO.getAuth(authToken).username();
         var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
-                "Player has joined game #" + authToken + "!", new ChessBoard());
+                username + " has joined game #" + gameID + "!", new ChessBoard());
         connections.broadcast(authToken, serverMessage);
     }
 
