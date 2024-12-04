@@ -44,7 +44,7 @@ public class WebSocketCommunicator extends Endpoint {
         System.out.println("Connected to server: " + session.getRequestURI());
     }
 
-    public void enterPetShop(String visitorName) throws Exception {
+    public void connect(String visitorName) throws Exception {
         try {
             var userGameCommand = new UserGameCommand(UserGameCommand.CommandType.CONNECT, "authToken", 1);
             this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));

@@ -24,7 +24,7 @@ public class ConnectionManager {
         String username = "Test";
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (username.equals("excludeUserName")) {
+                if (username.equals("Test")) {
                     c.send(serverMessage.toString());
                 }
             } else {

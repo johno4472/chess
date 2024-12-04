@@ -20,6 +20,7 @@ public class ServerFacade {
         port = porty;
         url = "http://localhost:" + port;
         httpCommunicator = new HTTPCommunicator(port);
+        serverMessageObserver = new ServerMessageSender();
     }
 
     public static int getPort() {
@@ -57,6 +58,7 @@ public class ServerFacade {
             } catch (Exception e) {
                 throw new Exception();
             }
+            ws.connect("hello");
         }
         return response;
     }

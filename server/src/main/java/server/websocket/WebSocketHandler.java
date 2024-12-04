@@ -1,5 +1,6 @@
 package server.websocket;
 
+import chess.ChessBoard;
 import com.google.gson.Gson;
 import dataaccess.UserDAO;
 import dataaccess.GameDAO;
@@ -32,7 +33,8 @@ public class WebSocketHandler {
 
     private void connect(int gameID, Session session) throws IOException {
         connections.add(gameID, session);
-        var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+        var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
+                "Player has joined game #" + gameID + "!", new ChessBoard());
         connections.broadcast(gameID, serverMessage);
     }
 
@@ -42,7 +44,8 @@ public class WebSocketHandler {
 
     private void leave(int gameID, Session session) throws IOException {
         connections.remove("visitorName");
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "This person left the game",
+                new ChessBoard());
         connections.broadcast(1, notification);
     }
 
@@ -52,7 +55,8 @@ public class WebSocketHandler {
 
     public void makeNoise(String petName, String sound) throws Exception {
         try {
-            var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "This guy's making noise",
+                    new ChessBoard());
             connections.broadcast(1, serverMessage);
         } catch (Exception ex) {
             throw new Exception();

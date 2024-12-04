@@ -231,7 +231,7 @@ public class ConsoleMenu {
             JoinGameResponse response = serverFacade.joinGame(new JoinGameRequest(
                     color, dataGameID, authToken));
             if (response.message() == null) {
-                printBoard(color);
+                //printBoard(color);
                 inGame = true;
             } else {
                 System.out.println("Something went wrong. You could have put in an invalid ID or chosen/written an incorrect color entry");
