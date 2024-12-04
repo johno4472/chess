@@ -46,7 +46,7 @@ public class WebSocketCommunicator extends Endpoint {
 
     public void enterPetShop(String visitorName) throws Exception {
         try {
-            var userGameCommand = new UserGameCommand(UserGameCommand.CommandType.ENTER, visitorName);
+            var userGameCommand = new UserGameCommand(UserGameCommand.CommandType.CONNECT, "authToken", 1);
             this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
         } catch (IOException ex) {
             throw new Exception();
@@ -55,7 +55,7 @@ public class WebSocketCommunicator extends Endpoint {
 
     public void leavePetShop(String visitorName) throws Exception {
         try {
-            var userGameCommand = new UserGameCommand(UserGameCommand.CommandType.EXIT, visitorName);
+            var userGameCommand = new UserGameCommand(UserGameCommand.CommandType.LEAVE, "authToken", 1);
             this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
             this.session.close();
         } catch (IOException ex) {

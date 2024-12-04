@@ -227,15 +227,19 @@ public class ConsoleMenu {
                 colorChoice = scanner.nextLine();
             }
         }
-        JoinGameResponse response = serverFacade.joinGame(new JoinGameRequest(
-                color, dataGameID, authToken));
-        if (response.message() == null) {
-            printBoard(color);
-            inGame = true;
+        try {
+            JoinGameResponse response = serverFacade.joinGame(new JoinGameRequest(
+                    color, dataGameID, authToken));
+            if (response.message() == null) {
+                printBoard(color);
+                inGame = true;
+            } else {
+                System.out.println("Something went wrong. You could have put in an invalid ID or chosen/written an incorrect color entry");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        else {
-            System.out.println("Something went wrong. You could have put in an invalid ID or chosen/written an incorrect color entry");
-        }
+
 
 
     }

@@ -5,15 +5,20 @@ import com.google.gson.Gson;
 import model.UserData;
 import model.requestresult.*;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class ServerFacade {
     private HTTPCommunicator httpCommunicator;
     private static int port;
+    private WebSocketCommunicator ws;
+    private ServerMessageObserver serverMessageObserver;
+    String url;
 
     public ServerFacade (int porty) {
         port = porty;
+        url = "http://localhost:" + port;
         httpCommunicator = new HTTPCommunicator(port);
     }
 
@@ -43,9 +48,17 @@ public class ServerFacade {
         return new Gson().fromJson(new InputStreamReader(json), ListGamesResponse.class);
     }
 
-    public JoinGameResponse joinGame(JoinGameRequest request) {
+    public JoinGameResponse joinGame(JoinGameRequest request) throws Exception {
         InputStream json = httpCommunicator.put(request.authToken(), new Gson().toJson(request), "/game");
-        return new Gson().fromJson(new InputStreamReader(json), JoinGameResponse.class);
+        JoinGameResponse response = new Gson().fromJson(new InputStreamReader(json), JoinGameResponse.class);
+        if (response.message() == null){
+            try {
+                ws = new WebSocketCommunicator(url, serverMessageObserver);
+            } catch (Exception e) {
+                throw new Exception();
+            }
+        }
+        return response;
     }
 
     public ListGamesResponse observeGame(int gameID, String authToken) {

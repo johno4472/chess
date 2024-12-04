@@ -1,6 +1,7 @@
 package server;
 
 import dataaccess.*;
+import server.websocket.WebSocketHandler;
 import service.ChessService;
 import spark.*;
 
@@ -9,6 +10,11 @@ import java.sql.SQLException;
 import static dataaccess.DatabaseManager.createDatabase;
 
 public class Server {
+    private final WebSocketHandler webSocketHandler;
+
+    public Server() {
+        webSocketHandler = new WebSocketHandler();
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -29,6 +35,7 @@ public class Server {
         //a. need to initialize user, game, and auth DAO to pass in here
 
         Spark.staticFiles.location("web");
+        Spark.webSocket("/ws", webSocketHandler);
 
         // Register your endpoints and handle exceptions here.
 

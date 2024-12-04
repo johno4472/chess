@@ -30,22 +30,30 @@ public class WebSocketHandler {
         }
     }
 
-    private void enter(String visitorName, Session session) throws IOException {
-        connections.add(visitorName, session);
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-        connections.broadcast(visitorName, notification);
+    private void connect(int gameID, Session session) throws IOException {
+        connections.add(gameID, session);
+        var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+        connections.broadcast(gameID, serverMessage);
     }
 
-    private void exit(String visitorName) throws IOException {
-        connections.remove(visitorName);
+    private void makeMove(int gameID, Session session){
+
+    }
+
+    private void leave(int gameID, Session session) throws IOException {
+        connections.remove("visitorName");
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(visitorName, notification);
+        connections.broadcast(1, notification);
+    }
+
+    private void resign(int gameID, Session session){
+
     }
 
     public void makeNoise(String petName, String sound) throws Exception {
         try {
-            var notification = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
-            connections.broadcast("", notification);
+            var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            connections.broadcast(1, serverMessage);
         } catch (Exception ex) {
             throw new Exception();
         }
