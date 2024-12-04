@@ -6,11 +6,15 @@ import java.io.IOException;
 
 public class Connection {
     public int gameID;
+    public SessionInfo sessionInfo;
     public Session session;
+    public String authToken;
 
-    public Connection(int gameID, Session session) {
-        this.gameID = gameID;
-        this.session = session;
+    public Connection(String authToken, SessionInfo sessionInfo) {
+        this.sessionInfo = sessionInfo;
+        this.session = (Session) sessionInfo.session();
+        this.gameID = sessionInfo.gameID();
+        this.authToken = authToken;
     }
 
     public void send(String msg) throws IOException {

@@ -18,38 +18,38 @@ import java.util.Timer;
 @WebSocket
 public class WebSocketHandler {
 
-    private final ConnectionManager connections = new ConnectionManager();
+    private static final ConnectionManager connections = new ConnectionManager();
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
-            case CONNECT -> connect(command.getGameID(), session);
-            case MAKE_MOVE -> makeMove(command.getGameID(), session);
-            case LEAVE -> leave(command.getGameID(), session);
-            case RESIGN -> resign(command.getGameID(), session);
+            case CONNECT -> connect(command.getAuthToken(), command.getGameID(), session);
+            case MAKE_MOVE -> makeMove(command.getAuthToken(), session);
+            case LEAVE -> leave(command.getAuthToken(), session);
+            case RESIGN -> resign(command.getAuthToken(), session);
         }
     }
 
-    private void connect(int gameID, Session session) throws IOException {
-        connections.add(gameID, session);
+    private void connect(String authToken, int gameID, Session session) throws IOException {
+        connections.add(authToken, new SessionInfo(gameID, (org.glassfish.grizzly.http.server.Session) session));
         var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
-                "Player has joined game #" + gameID + "!", new ChessBoard());
-        connections.broadcast(gameID, serverMessage);
+                "Player has joined game #" + authToken + "!", new ChessBoard());
+        connections.broadcast(authToken, serverMessage);
     }
 
-    private void makeMove(int gameID, Session session){
+    private void makeMove(String authToken, Session session){
 
     }
 
-    private void leave(int gameID, Session session) throws IOException {
+    private void leave(String authToken, Session session) throws IOException {
         connections.remove("visitorName");
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "This person left the game",
                 new ChessBoard());
-        connections.broadcast(1, notification);
+        connections.broadcast("authToken", notification);
     }
 
-    private void resign(int gameID, Session session){
+    private void resign(String authToken, Session session){
 
     }
 
@@ -57,7 +57,7 @@ public class WebSocketHandler {
         try {
             var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "This guy's making noise",
                     new ChessBoard());
-            connections.broadcast(1, serverMessage);
+            connections.broadcast("authToken", serverMessage);
         } catch (Exception ex) {
             throw new Exception();
         }

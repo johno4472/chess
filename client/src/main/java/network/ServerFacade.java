@@ -58,7 +58,7 @@ public class ServerFacade {
             } catch (Exception e) {
                 throw new Exception();
             }
-            ws.connect("hello");
+            ws.connect(request.authToken(), request.gameID());
         }
         return response;
     }
