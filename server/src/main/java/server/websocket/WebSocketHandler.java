@@ -95,11 +95,28 @@ public class WebSocketHandler {
         return moveArray;
     }
 
+    public ChessGame.TeamColor getColor(String username, GameData gameData) {
+        if (username.equals(gameData.blackUsername())){
+            return ChessGame.TeamColor.BLACK;
+        } else if (username.equals(gameData.whiteUsername())) {
+            return ChessGame.TeamColor.WHITE;
+        } else {
+            return null;
+        }
+    }
+
     private void makeMove(String authToken, int gameID, Session session, ChessMove chessMove){
         try {
             username = authDAO.getAuth(authToken).username();
             gameData = gameDAO.getGame(gameID);
             ChessGame game = gameData.game();
+            color = getColor(username, gameData);
+            if (!game.getTeamTurn().equals(color)){
+                Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username));
+                connection.send(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Hey! It's not your turn yet!",
+                        null, null).toString());
+                return;
+            }
             ArrayList<String> moveArray = customizeMoveMessage(game.getBoard(), chessMove);
             game.makeMove(chessMove);
             gameData = new GameData(gameData.gameID(), gameData.whiteUsername(),

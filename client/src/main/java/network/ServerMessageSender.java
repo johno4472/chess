@@ -17,7 +17,7 @@ public class ServerMessageSender implements ServerMessageObserver {
     }
 
     public void sendErrorMessage(String message){
-
+        System.out.println(message);
     }
 
     public void loadGame(String message, ChessBoard chessBoard, ChessGame.TeamColor color) {
