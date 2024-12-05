@@ -18,6 +18,7 @@ public class ConsoleMenu {
     Boolean quit = false;
     private boolean inGame;
     private ChessGame.TeamColor inGameColor;
+    private int gameID;
 
 
     public ConsoleMenu() {
@@ -121,7 +122,9 @@ public class ConsoleMenu {
     }
 
     private void leave() {
-
+        serverFacade.leaveGame(new JoinGameRequest(inGameColor, gameID, authToken));
+        inGame = false;
+        System.out.println("You have left the game.");
     }
 
     private void makeMove(){
@@ -231,7 +234,8 @@ public class ConsoleMenu {
             JoinGameResponse response = serverFacade.joinGame(new JoinGameRequest(
                     color, dataGameID, authToken));
             if (response.message() == null) {
-                //printBoard(color);
+                printBoard(color);
+                this.gameID = userGameID;
                 inGame = true;
             } else {
                 System.out.println("Something went wrong. You could have put in an invalid ID or chosen/written an incorrect color entry");

@@ -26,6 +26,6 @@ public class ServerMessageSender implements ServerMessageObserver {
     }
 
     public void sendNotification(String message){
-
+        System.out.println(message);
     }
 }

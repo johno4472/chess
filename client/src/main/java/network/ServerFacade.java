@@ -63,6 +63,15 @@ public class ServerFacade {
         return response;
     }
 
+    public void leaveGame(JoinGameRequest request) {
+        try{
+            ws.leaveGame(request.authToken(), request.gameID());
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public ListGamesResponse observeGame(int gameID, String authToken) {
         InputStream json = httpCommunicator.get(authToken, "/game");
         return new Gson().fromJson(new InputStreamReader(json), ListGamesResponse.class);
