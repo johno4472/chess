@@ -62,10 +62,6 @@ public class ServerMessage {
         return color;
     }
 
-    public void nullifyGame() {
-        this.game = null;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

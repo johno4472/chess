@@ -33,7 +33,9 @@ public class HighlightBoardUI {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         board = chessGame.getBoard();
         color = userColor;
-        validMoves = chessGame.validMoves(position);
+        if (position != null) {
+            validMoves = chessGame.validMoves(position);
+        }
         startPosition = position;
         dark = false;
 
@@ -57,16 +59,6 @@ public class HighlightBoardUI {
 
         out.print(SET_BG_COLOR_DARK_GREY);
         out.print(SET_TEXT_COLOR_WHITE);
-    }
-
-    private static void drawSolidLine(PrintStream out) {
-        setMagenta(out);
-        for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-            out.print(EMPTY);
-        }
-        setDarkGrey(out);
-        out.println();
-
     }
 
     private static void drawTopOrBottom(PrintStream out) {
@@ -183,12 +175,14 @@ public class HighlightBoardUI {
     }
 
     private static void printPlayer(PrintStream out, ChessPosition position) {
-        if (validMoves.remove(new ChessMove(startPosition, position, null))){
-            if (dark){
-                out.print(SET_BG_COLOR_DARK_GREEN);
-            }
-            else {
-                out.print(SET_BG_COLOR_GREEN);
+        if (startPosition != null) {
+            if (validMoves.remove(new ChessMove(startPosition, position, null))){
+                if (dark){
+                    out.print(SET_BG_COLOR_DARK_GREEN);
+                }
+                else {
+                    out.print(SET_BG_COLOR_GREEN);
+                }
             }
         }
         ChessPiece piece = board.getPiece(position);

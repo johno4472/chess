@@ -1,11 +1,9 @@
 package network;
 
-import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPosition;
 import ui.HighlightBoardUI;
 import websocket.messages.ServerMessage;
-import ui.BoardUI;
 
 public class ServerMessageSender implements ServerMessageObserver {
     @Override
@@ -27,7 +25,7 @@ public class ServerMessageSender implements ServerMessageObserver {
 
     public void loadGame(String message, ChessGame chessGame, ChessGame.TeamColor color, String piece) {
         if (color == null){
-            BoardUI.main(chessGame.getBoard(), ChessGame.TeamColor.WHITE);
+            HighlightBoardUI.main(chessGame, ChessGame.TeamColor.WHITE, null);
         }
         else {
             if (message != null && message.equals("highlight")){
@@ -38,7 +36,7 @@ public class ServerMessageSender implements ServerMessageObserver {
 
             }
             else{
-                BoardUI.main(chessGame.getBoard(), color);
+                HighlightBoardUI.main(chessGame, color, null);
             }
         }
         if (message != null){

@@ -27,14 +27,13 @@ public class ConnectionManager {
         System.out.println("connections size -> " + size);
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (!c.username.equals(username)) {
-                    if (c.gameID == gameID){
-                        if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
-                            serverMessage.setColor(c.sessionInfo.color());
-                        }
-                        c.send(serverMessage.toString());
+                if (!c.username.equals(username) && c.gameID == gameID) {
+                    if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
+                        serverMessage.setColor(c.sessionInfo.color());
                     }
+                    c.send(serverMessage.toString());
                 }
+
             } else {
                 removeList.add(c);
             }

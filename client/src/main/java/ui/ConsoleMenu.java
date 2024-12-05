@@ -136,10 +136,6 @@ public class ConsoleMenu {
         System.out.println("'til we meet again!");
     }
 
-    private void printBoard(ChessGame.TeamColor color) {
-        BoardUI.main(new ChessGame().getBoard(), color);
-    }
-
     private void redrawBoard() {
         serverFacade.makeMove(authToken, gameID, null);
     }
@@ -315,7 +311,6 @@ public class ConsoleMenu {
             JoinGameResponse response = serverFacade.joinGame(new JoinGameRequest(
                     color, dataGameID, authToken));
             if (response.message() == null) {
-                //printBoard(color);
                 this.gameID = userGameID;
                 inGame = true;
             } else {
@@ -334,7 +329,6 @@ public class ConsoleMenu {
         int gameID = Integer.parseInt(scanner.nextLine());
         ListGamesResponse response = serverFacade.observeGame(gameID, authToken);
         if (response.games().size() >= gameID) {
-            BoardUI.main(new ChessGame().getBoard(), ChessGame.TeamColor.WHITE);
             observing = true;
         }
         else {
