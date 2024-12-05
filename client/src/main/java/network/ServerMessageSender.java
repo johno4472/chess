@@ -11,7 +11,7 @@ public class ServerMessageSender implements ServerMessageObserver {
         String message = serverMessage.getMessageBody();
         switch (serverMessage.getServerMessageType()){
             case ERROR -> sendErrorMessage(message);
-            case LOAD_GAME -> loadGame(message, serverMessage.getChessBoard());
+            case LOAD_GAME -> loadGame(message, serverMessage.getChessBoard(), serverMessage.getColor());
             case NOTIFICATION -> sendNotification(message, serverMessage);
         }
     }
@@ -20,13 +20,16 @@ public class ServerMessageSender implements ServerMessageObserver {
 
     }
 
-    public void loadGame(String message, ChessBoard chessBoard) {
-        BoardUI.main(chessBoard, ChessGame.TeamColor.WHITE);
-        System.out.println(message);
+    public void loadGame(String message, ChessBoard chessBoard, ChessGame.TeamColor color) {
+        BoardUI.main(chessBoard, color);
+        if (message != null){
+            System.out.println(message);
+        }
     }
 
     public void sendNotification(String message, ServerMessage serverMessage){
-        serverMessage.nullifyGame();
-        System.out.println(message);
+        if (message != null) {
+            System.out.println(message);
+        }
     }
 }

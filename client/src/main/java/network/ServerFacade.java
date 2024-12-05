@@ -1,6 +1,7 @@
 package network;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import model.UserData;
 import model.requestresult.*;
@@ -63,9 +64,27 @@ public class ServerFacade {
         return response;
     }
 
+    public void makeMove(String authToken, int gameID, ChessMove chessMove){
+        try{
+            ws.makeMove(authToken , gameID, chessMove);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void leaveGame(JoinGameRequest request) {
         try{
             ws.leaveGame(request.authToken(), request.gameID());
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void resign(JoinGameRequest request){
+        try{
+            ws.resign(request.authToken(), request.gameID());
 
         } catch (Exception e) {
             throw new RuntimeException(e);

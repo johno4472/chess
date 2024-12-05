@@ -62,10 +62,11 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public void updateGame(int gameID, GameData gameData) {
+        String game = new Gson().toJson(gameData.game());
         var statement = "UPDATE games SET whiteUsername = ?, blackUsername = ?," +
-                " gameName = ? Where id = ?";
+                " gameName = ?, game = ? Where id = ?";
         ExecuteUpdate.executeUpdate(statement, gameData.whiteUsername(),
-                gameData.blackUsername(), gameData.gameName(), gameData.gameID());
+                gameData.blackUsername(), gameData.gameName(), game, gameData.gameID());
     }
 
     @Override

@@ -1,12 +1,12 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
+import chess.*;
 import model.SimpleGameData;
 import model.UserData;
 import model.requestresult.*;
 import network.ServerFacade;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
 
@@ -19,6 +19,7 @@ public class ConsoleMenu {
     private boolean inGame;
     private ChessGame.TeamColor inGameColor;
     private int gameID;
+    private ChessGame chessGame;
 
 
     public ConsoleMenu() {
@@ -127,12 +128,62 @@ public class ConsoleMenu {
         System.out.println("You have left the game.");
     }
 
+    private ArrayList<Integer> convertMoveToInt(String move){
+        ArrayList<Integer> intArray = new ArrayList<Integer>();
+        for (int i = 0; i < move.length(); i++){
+            switch (move.charAt(i)){
+                case '1':
+                case 'a':
+                    intArray.add(1);
+                    break;
+                case '2':
+                case 'b':
+                    intArray.add(2);
+                    break;
+                case '3':
+                case 'c':
+                    intArray.add(3);
+                    break;
+                case '4':
+                case 'd':
+                    intArray.add(4);
+                    break;
+                case '5':
+                case 'e':
+                    intArray.add(5);
+                    break;
+                case '6':
+                case 'f':
+                    intArray.add(6);
+                    break;
+                case '7':
+                case 'g':
+                    intArray.add(7);
+                    break;
+                case '8':
+                case 'h':
+                    intArray.add(8);
+                    break;
+            }
+        }
+        return intArray;
+    }
+
+
     private void makeMove(){
+        System.out.println("Where do you want to move?");
+        System.out.println("Please input your move exactly like this: StartrowStartcolumnEndrowEndColumn (example below)");
+        System.out.println("1a3c");
+        String move = scanner.nextLine();
+        ArrayList<Integer> intList = convertMoveToInt(move);
+        ChessMove chessMove = new ChessMove(new ChessPosition(intList.get(0), intList.get(1)),
+                new ChessPosition(intList.get(2), intList.get(3)), null);
+        serverFacade.makeMove(authToken, gameID, chessMove);
 
     }
 
     private void resign(){
-
+        serverFacade.resign(new JoinGameRequest(inGameColor, gameID, authToken));
     }
 
     private void highlightLegalMoves(){
