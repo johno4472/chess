@@ -64,11 +64,15 @@ public class WebSocketHandler {
         }
         connections.add(authToken, new SessionInfo(gameID, session, username));
         try {
-            var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
+            var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                     username + " has joined game #" + gameID + " as " + textColor + "!",
-                    gameDAO.getGame(gameID).game().getBoard(),
-                    "You have joined game #" + gameID + " as " + textColor + "!");
+                    null);
             connections.broadcast(username, gameID, serverMessage);
+            Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username));
+            serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
+                    null,
+                    gameDAO.getGame(gameID).game().getBoard());
+            connection.send(serverMessage.toString());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -83,7 +87,7 @@ public class WebSocketHandler {
             connections.remove(authToken);
             username = authDAO.getAuth(authToken).username();
             var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username + " left the game",
-                    new ChessBoard(), "You have left the game");
+                    null);
             connections.broadcast(username, gameID, serverMessage);
             gameData = gameDAO.getGame(gameID);
             if (!(gameData.blackUsername() == null) && gameData.blackUsername().equals(username)){
@@ -97,8 +101,47 @@ public class WebSocketHandler {
         }
     }
 
-    private void resign(String authToken, Session session){
+    private String getOpponentName(String username, int gameID) {
+        try {
+            String blackUser = gameDAO.getGame(gameID).blackUsername();
+            String whiteUser = gameDAO.getGame(gameID).blackUsername();
+            if (!(blackUser == null) && blackUser.equals(username)) {
+                if (whiteUser != null) {
+                    return whiteUser;
+                }
+            } else if (!(whiteUser == null) && whiteUser.equals(username)) {
+                if (blackUser != null) {
+                    return whiteUser;
+                }
+            }
+            return "The Ghost Player";
 
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private GameData updateToOver(GameData gameData) {
+        return gameData.updateToOver();
+    }
+
+    private void resign(String authToken, Session session){
+        try {
+            connections.remove(authToken);
+            username = authDAO.getAuth(authToken).username();
+            var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username +
+                    " has resigned. " + getOpponentName(username, gameID) + " has won!",
+                    null);
+            connections.broadcast(username, gameID, serverMessage);
+            serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                    "You gave up and lost. I hope you're happy", null);
+            Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username));
+            connection.send(serverMessage.toString());
+            gameData = gameDAO.getGame(gameID).updateToOver();
+            gameDAO.updateGame(gameID, gameData);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

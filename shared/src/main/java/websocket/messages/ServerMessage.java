@@ -13,9 +13,8 @@ import java.util.Objects;
  */
 public class ServerMessage {
     ServerMessageType serverMessageType;
-    String messageBody;
-    ChessBoard chessBoard;
-    String personalMessage;
+    String message;
+    ChessBoard game;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -23,12 +22,10 @@ public class ServerMessage {
         NOTIFICATION
     }
 
-    public ServerMessage(ServerMessageType type, String messageBody, ChessBoard chessBoard, String personalMessage) {
-        this.messageBody = messageBody;
+    public ServerMessage(ServerMessageType type, String message, ChessBoard game) {
+        this.message = message;
         this.serverMessageType = type;
-        this.chessBoard = chessBoard;
-        this.personalMessage = personalMessage;
-
+        this.game = game;
     }
 
     public ServerMessageType getServerMessageType() {
@@ -36,7 +33,7 @@ public class ServerMessage {
     }
 
     public String getMessageBody() {
-        return messageBody;
+        return message;
     }
 
     public String toString(){
@@ -44,11 +41,11 @@ public class ServerMessage {
     }
 
     public ChessBoard getChessBoard() {
-        return chessBoard;
+        return game;
     }
 
-    public ServerMessage makePersonal() {
-        return new ServerMessage(this.getServerMessageType(), this.personalMessage, this.chessBoard, this.messageBody);
+    public void nullifyGame() {
+        this.game = null;
     }
 
     @Override

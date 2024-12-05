@@ -12,7 +12,7 @@ public class ServerMessageSender implements ServerMessageObserver {
         switch (serverMessage.getServerMessageType()){
             case ERROR -> sendErrorMessage(message);
             case LOAD_GAME -> loadGame(message, serverMessage.getChessBoard());
-            case NOTIFICATION -> sendNotification(message);
+            case NOTIFICATION -> sendNotification(message, serverMessage);
         }
     }
 
@@ -25,7 +25,8 @@ public class ServerMessageSender implements ServerMessageObserver {
         System.out.println(message);
     }
 
-    public void sendNotification(String message){
+    public void sendNotification(String message, ServerMessage serverMessage){
+        serverMessage.nullifyGame();
         System.out.println(message);
     }
 }

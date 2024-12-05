@@ -30,9 +30,6 @@ public class ConnectionManager {
                         c.send(serverMessage.toString());
                     }
                 }
-                else {
-                    c.send(serverMessage.makePersonal().toString());
-                }
             } else {
                 removeList.add(c);
             }

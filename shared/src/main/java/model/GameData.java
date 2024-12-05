@@ -10,4 +10,9 @@ public record GameData(int gameID, String whiteUsername, String blackUsername, S
     public GameData nullifyWhite() {
         return new GameData(gameID, null, blackUsername, gameName, game);
     }
+
+    public GameData updateToOver(){
+        game.updateToOver();
+        return this;
+    }
 }

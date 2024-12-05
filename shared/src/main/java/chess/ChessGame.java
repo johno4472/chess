@@ -1,5 +1,7 @@
 package chess;
 
+import model.GameData;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -13,11 +15,17 @@ public class ChessGame {
 
     private ChessBoard chessBoard;
     private TeamColor teamTurn;
+    private Boolean isOver;
 
     public ChessGame() {
         chessBoard = new ChessBoard();
         teamTurn = TeamColor.WHITE;
         chessBoard.resetBoard();
+        isOver = false;
+    }
+
+    public void updateToOver() {
+        isOver = true;
     }
 
     /**
