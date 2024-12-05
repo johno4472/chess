@@ -7,13 +7,11 @@ import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Timer;
 
 
 @WebSocket
@@ -48,8 +46,18 @@ public class WebSocketHandler {
 
     private void connect(String authToken, int gameID, Session session) throws IOException {
         this.gameID = gameID;
+
+        if (authDAO.getAuth(authToken) == null){
+            Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username, color));
+            connection.send(new ServerMessage(ServerMessage.ServerMessageType.ERROR, null,
+                    null, null, "Invalid AuthToken").toString());
+            return;
+        }
+
         username = authDAO.getAuth(authToken).username();
         try{
+
+
             if (gameID > gameDAO.listGames().size() || gameID < 0) {
                 Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username, color));
                 connection.send(new ServerMessage(ServerMessage.ServerMessageType.ERROR, null,
@@ -81,7 +89,7 @@ public class WebSocketHandler {
             connections.broadcast(username, gameID, serverMessage);
             Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username, color));
             serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
-                    null, gameDAO.getGame(gameID).game().getBoard(), color, null);
+                    null, gameDAO.getGame(gameID).game(), color, null);
             connection.send(serverMessage.toString());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -123,14 +131,31 @@ public class WebSocketHandler {
         try {
             Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username, color));
 
+            if (authDAO.getAuth(authToken) == null){
+                connection.send(new ServerMessage(ServerMessage.ServerMessageType.ERROR, null,
+                        null, null, "Invalid AuthToken").toString());
+                return;
+            }
+
             username = authDAO.getAuth(authToken).username();
             gameData = gameDAO.getGame(gameID);
             ChessGame game = gameData.game();
             color = getColor(username, gameData);
 
+            if (game.getIsOver()) {
+                connection.send(new ServerMessage(ServerMessage.ServerMessageType.ERROR, null, null, null,
+                        "Game is over! No more actions to alter the board").toString());
+                return;
+            }
+
             if (chessMove == null) {
                 connection.send(new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
-                        null, game.getBoard(), color, null).toString());
+                        null, game, color, null).toString());
+                return;
+            }
+            else if (chessMove.getEndPosition() == null) {
+                connection.send(new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
+                        "highlight", game, color, chessMove.getStartPosition().getRowCol()).toString());
                 return;
             }
 
@@ -154,22 +179,27 @@ public class WebSocketHandler {
                         "a valid move! Maybe look at the valid moves for each piece and choose one of those options.").toString());
                 return;
             }
+
             ArrayList<String> moveArray = customizeMoveMessage(game.getBoard(), chessMove);
             game.makeMove(chessMove);
             gameData = new GameData(gameData.gameID(), gameData.whiteUsername(),
                     gameData.blackUsername(), gameData.gameName(), game);
             gameDAO.updateGame(gameID, gameData);
-            var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, username + " moved " +
-                    moveArray.get(0) + " from " + moveArray.get(1) + " to " + moveArray.get(2), game.getBoard(), color, null);
+
+            var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, game, color, null);
             connections.broadcast(username, gameID, serverMessage);
-            serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, game.getBoard(),
+            serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, game,
                     color, null);
             connection.send(serverMessage.toString());
+            connections.broadcast(username, gameID, new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                    username + " moved " + moveArray.get(0) + " from " + moveArray.get(1) +
+                            " to " + moveArray.get(2), null, null, null));
 
             if (game.isInCheckmate(opposite(color))){
                 ServerMessage checkMateMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                        "" + opposite(color).toString() + "is in checkmate. " + username
+                        "" + opposite(color).toString() + " is in checkmate. " + username
                                 + " wins", null, null, null);
+                connections.broadcast(username, gameID, checkMateMessage);
                 connection.send(checkMateMessage.toString());
                 game.updateToOver();
                 gameData = new GameData(gameData.gameID(), gameData.whiteUsername(),
@@ -246,6 +276,18 @@ public class WebSocketHandler {
         try {
             connections.remove(authToken);
             username = authDAO.getAuth(authToken).username();
+            if (getColor(username, gameDAO.getGame(gameID)) == null){
+                Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username, color));
+                connection.send(new ServerMessage(ServerMessage.ServerMessageType.ERROR, null, null, null,
+                        "You are an observer! You can't resign. You may leave if you wish").toString());
+                return;
+            }
+            if (gameDAO.getGame(gameID).game().getIsOver()){
+                Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username, color));
+                connection.send(new ServerMessage(ServerMessage.ServerMessageType.ERROR, null, null, null,
+                        "Game is over! Why are you trying to resign?").toString());
+                return;
+            }
             var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username +
                     " has resigned. " + getOpponentName(username, gameID) + " has won!",
                     null, null, null);

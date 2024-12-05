@@ -2,7 +2,6 @@ package network;
 
 import chess.ChessMove;
 import com.google.gson.Gson;
-import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
@@ -73,6 +72,7 @@ public class WebSocketCommunicator extends Endpoint {
             throw new Exception();
         }
     }
+
 
     public void resign(String authToken, int gameID) throws Exception {
         try {

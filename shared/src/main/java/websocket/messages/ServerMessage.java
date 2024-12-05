@@ -15,7 +15,7 @@ import java.util.Objects;
 public class ServerMessage {
     ServerMessageType serverMessageType;
     String message;
-    ChessBoard game;
+    ChessGame game;
     ChessGame.TeamColor color;
     String errorMessage;
 
@@ -25,7 +25,7 @@ public class ServerMessage {
         NOTIFICATION
     }
 
-    public ServerMessage(ServerMessageType type, String message, ChessBoard game, ChessGame.TeamColor color,
+    public ServerMessage(ServerMessageType type, String message, ChessGame game, ChessGame.TeamColor color,
                          String errorMessage) {
         this.message = message;
         this.serverMessageType = type;
@@ -46,7 +46,7 @@ public class ServerMessage {
         return new Gson().toJson(this);
     }
 
-    public ChessBoard getChessBoard() {
+    public ChessGame getChessBoard() {
         return game;
     }
 

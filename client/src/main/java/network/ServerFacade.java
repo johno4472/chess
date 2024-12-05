@@ -2,6 +2,7 @@ package network;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import model.UserData;
 import model.requestresult.*;
@@ -9,6 +10,7 @@ import model.requestresult.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class ServerFacade {
     private HTTPCommunicator httpCommunicator;
@@ -62,6 +64,16 @@ public class ServerFacade {
             ws.connect(request.authToken(), request.gameID());
         }
         return response;
+    }
+
+    public void highlightLegalMoves(String authToken, int gameID, ArrayList<Integer> intArray){
+        try{
+            ws.makeMove(authToken, gameID, new ChessMove(new ChessPosition(intArray.get(0), intArray.get(1)),
+                    null, null));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void makeMove(String authToken, int gameID, ChessMove chessMove){

@@ -213,7 +213,11 @@ public class ConsoleMenu {
     }
 
     private void highlightLegalMoves(){
-
+        System.out.println("Which piece would you like to see the available moves for?");
+        System.out.println("(Type the coordinates of that piece)");
+        String piece = scanner.nextLine();
+        ArrayList<Integer> intArray = convertMoveToInt(piece);
+        serverFacade.highlightLegalMoves(authToken, gameID, intArray);
     }
 
     private void register() {

@@ -2,6 +2,8 @@ package network;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPosition;
+import ui.HighlightBoardUI;
 import websocket.messages.ServerMessage;
 import ui.BoardUI;
 
@@ -11,7 +13,8 @@ public class ServerMessageSender implements ServerMessageObserver {
         String message = serverMessage.getMessageBody();
         switch (serverMessage.getServerMessageType()){
             case ERROR -> sendErrorMessage(serverMessage.getErrorMessage());
-            case LOAD_GAME -> loadGame(message, serverMessage.getChessBoard(), serverMessage.getColor());
+            case LOAD_GAME -> loadGame(message, serverMessage.getChessBoard(), serverMessage.getColor(),
+                    serverMessage.getErrorMessage());
             case NOTIFICATION -> sendNotification(message, serverMessage);
         }
     }
@@ -20,12 +23,23 @@ public class ServerMessageSender implements ServerMessageObserver {
         System.out.println(errorMessage);
     }
 
-    public void loadGame(String message, ChessBoard chessBoard, ChessGame.TeamColor color) {
+
+
+    public void loadGame(String message, ChessGame chessGame, ChessGame.TeamColor color, String piece) {
         if (color == null){
-            BoardUI.main(chessBoard, ChessGame.TeamColor.WHITE);
+            BoardUI.main(chessGame.getBoard(), ChessGame.TeamColor.WHITE);
         }
         else {
-            BoardUI.main(chessBoard, color);
+            if (message != null && message.equals("highlight")){
+                int row = Character.getNumericValue(piece.charAt(0));
+                int col = Character.getNumericValue(piece.charAt(1));
+                ChessPosition position = new ChessPosition(row, col);
+                HighlightBoardUI.main(chessGame, color, position);
+
+            }
+            else{
+                BoardUI.main(chessGame.getBoard(), color);
+            }
         }
         if (message != null){
             System.out.println(message);

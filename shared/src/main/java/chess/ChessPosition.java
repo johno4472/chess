@@ -18,6 +18,10 @@ public class ChessPosition {
         this.column = col;
     }
 
+    public String getRowCol() {
+        return "" + row + column;
+    }
+
 
     /**
      * @return which row this position is in
