@@ -50,6 +50,12 @@ public class WebSocketHandler {
         this.gameID = gameID;
         username = authDAO.getAuth(authToken).username();
         try{
+            if (gameID > gameDAO.listGames().size() || gameID < 0) {
+                Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username, color));
+                connection.send(new ServerMessage(ServerMessage.ServerMessageType.ERROR, null,
+                        null, null, "Invalid Game #").toString());
+                return;
+            }
             String white = gameDAO.getGame(gameID).whiteUsername();
             String black = gameDAO.getGame(gameID).blackUsername();
             if (black != null && black.equals(username)){
@@ -67,16 +73,15 @@ public class WebSocketHandler {
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        connections.add(authToken, new SessionInfo(gameID, session, username));
+        connections.add(authToken, new SessionInfo(gameID, session, username, color));
         try {
             var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                     username + " has joined game #" + gameID + " as " + textColor + "!",
-                    null, null);
+                    null, null, null);
             connections.broadcast(username, gameID, serverMessage);
-            Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username));
+            Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username, color));
             serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
-                    null,
-                    gameDAO.getGame(gameID).game().getBoard(), color);
+                    null, gameDAO.getGame(gameID).game().getBoard(), color, null);
             connection.send(serverMessage.toString());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -105,16 +110,48 @@ public class WebSocketHandler {
         }
     }
 
+    private ChessGame.TeamColor opposite(ChessGame.TeamColor color) {
+        if (color.equals(ChessGame.TeamColor.WHITE)){
+            return ChessGame.TeamColor.BLACK;
+        }
+        else {
+            return ChessGame.TeamColor.WHITE;
+        }
+    }
+
     private void makeMove(String authToken, int gameID, Session session, ChessMove chessMove){
         try {
+            Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username, color));
+
             username = authDAO.getAuth(authToken).username();
             gameData = gameDAO.getGame(gameID);
             ChessGame game = gameData.game();
             color = getColor(username, gameData);
+
+            if (chessMove == null) {
+                connection.send(new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
+                        null, game.getBoard(), color, null).toString());
+                return;
+            }
+
             if (!game.getTeamTurn().equals(color)){
-                Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username));
-                connection.send(new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Hey! It's not your turn yet!",
-                        null, null).toString());
+                connection.send(new ServerMessage(ServerMessage.ServerMessageType.ERROR, null,
+                        null, null, "Hey! It's not your turn yet!").toString());
+                return;
+            }
+
+            ChessPiece piece = game.getBoard().getPiece(chessMove.getStartPosition());
+            if (piece == null || piece.getTeamColor() != color){
+                connection.send(new ServerMessage(ServerMessage.ServerMessageType.ERROR, null, null,
+                        null, "Hey! You need to select a " +
+                        "square with one of YOUR pieces on it.").toString());
+                return;
+            }
+
+            if (!game.isIn(chessMove, game.validMoves(chessMove.getStartPosition()))){
+                connection.send(new ServerMessage(ServerMessage.ServerMessageType.ERROR, null,
+                        null, null, "Hey! That doesn't look like" +
+                        "a valid move! Maybe look at the valid moves for each piece and choose one of those options.").toString());
                 return;
             }
             ArrayList<String> moveArray = customizeMoveMessage(game.getBoard(), chessMove);
@@ -123,11 +160,40 @@ public class WebSocketHandler {
                     gameData.blackUsername(), gameData.gameName(), game);
             gameDAO.updateGame(gameID, gameData);
             var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, username + " moved " +
-                    moveArray.get(0) + " from " + moveArray.get(1) + " to " + moveArray.get(2), game.getBoard(), color);
+                    moveArray.get(0) + " from " + moveArray.get(1) + " to " + moveArray.get(2), game.getBoard(), color, null);
             connections.broadcast(username, gameID, serverMessage);
-            serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, game.getBoard(), color);
-            Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username));
+            serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, game.getBoard(),
+                    color, null);
             connection.send(serverMessage.toString());
+
+            if (game.isInCheckmate(opposite(color))){
+                ServerMessage checkMateMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                        "" + opposite(color).toString() + "is in checkmate. " + username
+                                + " wins", null, null, null);
+                connection.send(checkMateMessage.toString());
+                game.updateToOver();
+                gameData = new GameData(gameData.gameID(), gameData.whiteUsername(),
+                        gameData.blackUsername(), gameData.gameName(), game);
+                gameDAO.updateGame(gameID, gameData);
+            }
+
+            else if (game.isInCheck(opposite(color))){
+                ServerMessage checkMateMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                        "" + opposite(color).toString() + "is in check. " + username, null, null,
+                        null);
+                connection.send(checkMateMessage.toString());
+                game.updateToOver();
+            }
+            else if (game.isInStalemate(opposite(color))){
+                ServerMessage checkMateMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                        "Game is in stalemate. It's a tie!", null, null, null);
+                connection.send(checkMateMessage.toString());
+                game.updateToOver();
+                gameData = new GameData(gameData.gameID(), gameData.whiteUsername(),
+                        gameData.blackUsername(), gameData.gameName(), game);
+                gameDAO.updateGame(gameID, gameData);
+            }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -138,7 +204,7 @@ public class WebSocketHandler {
             connections.remove(authToken);
             username = authDAO.getAuth(authToken).username();
             var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username + " left the game",
-                    null, null);
+                    null, null, null);
             connections.broadcast(username, gameID, serverMessage);
             gameData = gameDAO.getGame(gameID);
             if (!(gameData.blackUsername() == null) && gameData.blackUsername().equals(username)){
@@ -182,11 +248,11 @@ public class WebSocketHandler {
             username = authDAO.getAuth(authToken).username();
             var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, username +
                     " has resigned. " + getOpponentName(username, gameID) + " has won!",
-                    null, null);
+                    null, null, null);
             connections.broadcast(username, gameID, serverMessage);
             serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                    "You gave up and lost. I hope you're happy", null, null);
-            Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username));
+                    "You gave up and lost. I hope you're happy", null, null, null);
+            Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username, color));
             connection.send(serverMessage.toString());
             gameData = gameDAO.getGame(gameID).updateToOver();
             gameDAO.updateGame(gameID, gameData);
@@ -194,5 +260,4 @@ public class WebSocketHandler {
             throw new RuntimeException(e);
         }
     }
-
 }

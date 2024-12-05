@@ -8,6 +8,7 @@ import network.ServerFacade;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class ConsoleMenu {
@@ -20,6 +21,7 @@ public class ConsoleMenu {
     private ChessGame.TeamColor inGameColor;
     private int gameID;
     private ChessGame chessGame;
+    private boolean observing;
 
 
     public ConsoleMenu() {
@@ -30,6 +32,7 @@ public class ConsoleMenu {
         authToken = null;
         inGame = false;
         inGameColor = ChessGame.TeamColor.WHITE;
+        observing = false;
 
         runConsole();
     }
@@ -52,7 +55,7 @@ public class ConsoleMenu {
                             help();
                             break;
                         case "2":
-                            printBoard(inGameColor);
+                            redrawBoard();
                             break;
                         case "3":
                             leave();
@@ -66,6 +69,21 @@ public class ConsoleMenu {
                         case "6":
                             highlightLegalMoves();
                             break;
+                    }
+                }
+                else if (observing) {
+                    System.out.println("1. Help\n2. Redraw Chessboard\n3. Leave");
+
+                    String choice = scanner.nextLine();
+                    switch (choice){
+                        case "1":
+                            help();
+                            break;
+                        case "2":
+                            redrawBoard();
+                            break;
+                        case "3":
+                            leave();
                     }
                 }
                 else {
@@ -120,6 +138,10 @@ public class ConsoleMenu {
 
     private void printBoard(ChessGame.TeamColor color) {
         BoardUI.main(new ChessGame().getBoard(), color);
+    }
+
+    private void redrawBoard() {
+        serverFacade.makeMove(authToken, gameID, null);
     }
 
     private void leave() {
@@ -183,7 +205,11 @@ public class ConsoleMenu {
     }
 
     private void resign(){
-        serverFacade.resign(new JoinGameRequest(inGameColor, gameID, authToken));
+        System.out.println("Are you sure you want to resign? You will automatically lose if you do.\n1. Yes\n2. No");
+        String response = scanner.nextLine();
+        if (Objects.equals(response, "1")){
+            serverFacade.resign(new JoinGameRequest(inGameColor, gameID, authToken));
+        }
     }
 
     private void highlightLegalMoves(){
@@ -285,7 +311,7 @@ public class ConsoleMenu {
             JoinGameResponse response = serverFacade.joinGame(new JoinGameRequest(
                     color, dataGameID, authToken));
             if (response.message() == null) {
-                printBoard(color);
+                //printBoard(color);
                 this.gameID = userGameID;
                 inGame = true;
             } else {
@@ -305,6 +331,7 @@ public class ConsoleMenu {
         ListGamesResponse response = serverFacade.observeGame(gameID, authToken);
         if (response.games().size() >= gameID) {
             BoardUI.main(new ChessGame().getBoard(), ChessGame.TeamColor.WHITE);
+            observing = true;
         }
         else {
             System.out.println("Looks like there was a mistake. Double check your entries.");

@@ -66,7 +66,7 @@ public class ServerFacade {
 
     public void makeMove(String authToken, int gameID, ChessMove chessMove){
         try{
-            ws.makeMove(authToken , gameID, chessMove);
+            ws.makeMove(authToken, gameID, chessMove);
 
         } catch (Exception e) {
             throw new RuntimeException(e);

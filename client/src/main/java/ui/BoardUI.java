@@ -36,15 +36,15 @@ public class BoardUI {
         if (color.equals(ChessGame.TeamColor.BLACK)){
             whiteView = -1;
         }
-        out.print(ERASE_SCREEN);
+        //out.print(ERASE_SCREEN);
 
-        drawTopOrBottom(out);
+        //drawTopOrBottom(out);
 
-        drawChessBoard(out);
+        //drawChessBoard(out);
 
-        drawTopOrBottom(out);
+        //drawTopOrBottom(out);
 
-        drawSolidLine(out);
+        //drawSolidLine(out);
 
         if (color.equals(ChessGame.TeamColor.BLACK)) {
             whiteView = 1;

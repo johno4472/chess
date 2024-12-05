@@ -17,6 +17,7 @@ public class ServerMessage {
     String message;
     ChessBoard game;
     ChessGame.TeamColor color;
+    String errorMessage;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -24,11 +25,13 @@ public class ServerMessage {
         NOTIFICATION
     }
 
-    public ServerMessage(ServerMessageType type, String message, ChessBoard game, ChessGame.TeamColor color) {
+    public ServerMessage(ServerMessageType type, String message, ChessBoard game, ChessGame.TeamColor color,
+                         String errorMessage) {
         this.message = message;
         this.serverMessageType = type;
         this.game = game;
         this.color = color;
+        this.errorMessage = errorMessage;
     }
 
     public ServerMessageType getServerMessageType() {
@@ -45,6 +48,14 @@ public class ServerMessage {
 
     public ChessBoard getChessBoard() {
         return game;
+    }
+
+    public void setColor(ChessGame.TeamColor color){
+        this.color = color;
+    }
+
+    public String getErrorMessage(){
+        return errorMessage;
     }
 
     public ChessGame.TeamColor getColor(){

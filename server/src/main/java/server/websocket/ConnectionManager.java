@@ -1,5 +1,7 @@
 package server.websocket;
 
+import chess.ChessGame;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.ServerMessage;
 
@@ -27,6 +29,9 @@ public class ConnectionManager {
             if (c.session.isOpen()) {
                 if (!c.username.equals(username)) {
                     if (c.gameID == gameID){
+                        if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
+                            serverMessage.setColor(c.sessionInfo.color());
+                        }
                         c.send(serverMessage.toString());
                     }
                 }

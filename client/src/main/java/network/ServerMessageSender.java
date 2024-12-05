@@ -10,14 +10,14 @@ public class ServerMessageSender implements ServerMessageObserver {
     public void notify(ServerMessage serverMessage) {
         String message = serverMessage.getMessageBody();
         switch (serverMessage.getServerMessageType()){
-            case ERROR -> sendErrorMessage(message);
+            case ERROR -> sendErrorMessage(serverMessage.getErrorMessage());
             case LOAD_GAME -> loadGame(message, serverMessage.getChessBoard(), serverMessage.getColor());
             case NOTIFICATION -> sendNotification(message, serverMessage);
         }
     }
 
-    public void sendErrorMessage(String message){
-        System.out.println(message);
+    public void sendErrorMessage(String errorMessage){
+        System.out.println(errorMessage);
     }
 
     public void loadGame(String message, ChessBoard chessBoard, ChessGame.TeamColor color) {
