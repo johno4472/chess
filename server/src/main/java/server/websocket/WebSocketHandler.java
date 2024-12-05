@@ -127,6 +127,15 @@ public class WebSocketHandler {
         }
     }
 
+    private Boolean qualifiesForPromotion(ChessMove move, ChessGame game){
+        if (game.getBoard().getPiece(move.getEndPosition()).getPieceType() == ChessPiece.PieceType.PAWN){
+            if (move.getEndPosition().getRow() == 8 && move.getEndPosition().getRow() == 1){
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void makeMove(String authToken, int gameID, Session session, ChessMove chessMove){
         try {
             Connection connection = new Connection(authToken, new SessionInfo(gameID, session, username, color));
@@ -175,13 +184,14 @@ public class WebSocketHandler {
                         "a valid move! Maybe look at the valid moves for each piece and choose one of those options.").toString());
                 return;
             }
-
-            ArrayList<String> moveArray = customizeMoveMessage(game.getBoard(), chessMove);
+            if (qualifiesForPromotion(chessMove, game)){
+                chessMove.addPromotionPiece(ChessPiece.PieceType.QUEEN);
+            }
+                ArrayList<String> moveArray = customizeMoveMessage(game.getBoard(), chessMove);
             game.makeMove(chessMove);
             gameData = new GameData(gameData.gameID(), gameData.whiteUsername(),
                     gameData.blackUsername(), gameData.gameName(), game);
             gameDAO.updateGame(gameID, gameData);
-
             var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, game, color, null);
             CONNECTIONS.broadcast(username, gameID, serverMessage);
             serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, game,
@@ -201,9 +211,7 @@ public class WebSocketHandler {
                 gameData = new GameData(gameData.gameID(), gameData.whiteUsername(),
                         gameData.blackUsername(), gameData.gameName(), game);
                 gameDAO.updateGame(gameID, gameData);
-            }
-
-            else if (game.isInCheck(opposite(color))){
+            } else if (game.isInCheck(opposite(color))){
                 ServerMessage checkMateMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                         "" + opposite(color).toString() + "is in check. " + username, null, null,
                         null);
