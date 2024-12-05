@@ -60,6 +60,10 @@ public class WebSocketHandler {
                 color = ChessGame.TeamColor.WHITE;
                 textColor = "white";
             }
+            else {
+                color = null;
+                textColor = "an observer";
+            }
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }

@@ -21,7 +21,12 @@ public class ServerMessageSender implements ServerMessageObserver {
     }
 
     public void loadGame(String message, ChessBoard chessBoard, ChessGame.TeamColor color) {
-        BoardUI.main(chessBoard, color);
+        if (color == null){
+            BoardUI.main(chessBoard, ChessGame.TeamColor.WHITE);
+        }
+        else {
+            BoardUI.main(chessBoard, color);
+        }
         if (message != null){
             System.out.println(message);
         }

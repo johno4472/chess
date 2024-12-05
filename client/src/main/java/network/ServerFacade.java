@@ -93,6 +93,12 @@ public class ServerFacade {
 
     public ListGamesResponse observeGame(int gameID, String authToken) {
         InputStream json = httpCommunicator.get(authToken, "/game");
+        try{
+            ws = new WebSocketCommunicator(url, serverMessageObserver);
+            ws.observeGame(authToken, gameID);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return new Gson().fromJson(new InputStreamReader(json), ListGamesResponse.class);
     }
 

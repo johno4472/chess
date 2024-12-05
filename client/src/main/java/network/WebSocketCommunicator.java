@@ -55,6 +55,15 @@ public class WebSocketCommunicator extends Endpoint {
         }
     }
 
+    public void observeGame(String authToken, int gameID){
+        try {
+            var userGameCommand = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID, null);
+            this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void leaveGame(String authToken, int gameID) throws Exception {
         try {
             var userGameCommand = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID, null);
